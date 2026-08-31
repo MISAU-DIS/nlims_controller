@@ -45,11 +45,17 @@ services:
     <<: *app
     command: bundle exec sidekiq
 
-  # Tailwind compiles into app/assets/builds, which is on the mounted volume, so
-  # the watcher is a service of its own rather than something the web process
-  # has to remember to start. In production the build happens once, in the image.
+  # Rebuilds the stylesheet while somebody is editing it. Started only when
+  # asked for — `COMPOSE_PROFILES=watch` in .env, which the development examples
+  # set, or `docker compose --profile watch up`.
+  #
+  # It is not what makes a fresh installation styled: the app service builds the
+  # stylesheet at boot, in its entrypoint. The watcher writes app/assets/builds,
+  # which a node running as production never reads, so on such a node it would
+  # be a healthy service compiling a file nobody serves.
   css:
     <<: *app
+    profiles: [ "watch" ]
     command: bundle exec rails tailwindcss:watch[always]
 
   mysql:
