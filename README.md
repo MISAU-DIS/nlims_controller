@@ -52,7 +52,9 @@ Execute o provisionamento dos contentores e dependências:
 docker compose up -d
 ```
 
-Na primeira inicialização, o contentor de aplicação executa automaticamente a compilação, criação da base de dados, execução das migrações do ActiveRecord e, em ambiente `development`, a inserção de dados de demonstração.
+Na primeira inicialização, o contentor de aplicação cria a base de dados, executa as migrações do ActiveRecord e, em ambiente `development`, insere os dados de demonstração.
+
+Compila também, no arranque, a folha de estilos que o ambiente em causa serve, quando ainda não existe: em `development` constrói `app/assets/builds/tailwind.css`; em `production`, onde o Propshaft serve exclusivamente a partir de `public/assets`, executa `assets:precompile`. É o que garante que uma instalação nova responde com os estilos aplicados à primeira página — sem esse passo, o nó serve todos os ecrãs sem estilos e nada o assinala nos registos. O passo é ignorado quando o ficheiro já existe, pelo que a imagem de produção, que pré-compila na construção, não o repete.
 
 ### 2.3. Verificação de Estado Operacional (Healthcheck)
 
@@ -119,7 +121,7 @@ A chave não carrega laboratório nenhum. Uma instância do mLab fala por todos 
 | --- | --- |
 | `app` | Servidor de aplicação HTTP Puma na porta `APP_PORT` (padrão: 3000). Executa a rotina de verificação e migração de base de dados na inicialização. |
 | `sidekiq` | Processador de tarefas assíncronas e agendadas em segundo plano (sincronização de outbox, pooling de dicionário e encaminhamentos). |
-| `css` | Compilador do Tailwind CSS em modo de monitorização contínua (*watch*). Utilizado em ambiente de desenvolvimento. |
+| `css` | Recompilação contínua (*watch*) da folha de estilos durante a edição. Só arranca com o perfil `watch` — `COMPOSE_PROFILES=watch`, definido nos `.env.*.example` de desenvolvimento, ou `docker compose --profile watch up`. Não é o que dá estilos a uma instalação nova: isso acontece no arranque do serviço `app`. |
 | `mysql` | Sistema de Gestão de Base de Dados Relacional MySQL 8.4 LTS. |
 | `redis` | Servidor Redis 7 para gestão de filas do Sidekiq e armazenamento temporário de rate limiting. |
 
@@ -385,7 +387,7 @@ bin/dev
 
 ## 8. Implantação em Produção
 
-Em produção utiliza-se a imagem final do `Dockerfile`, distinta do estágio `development` consumido pela stack do Docker Compose: executa sob utilizador não privilegiado, incorpora os assets pré-compilados e não monta código do sistema anfitrião.
+Em produção utiliza-se a imagem final do `Dockerfile`, distinta do estágio `development` consumido pela stack do Docker Compose: executa sob utilizador não privilegiado, incorpora os assets pré-compilados e não monta código do sistema anfitrião. Um nó levantado com `RAILS_ENV=production` a partir do estágio `development` — combinação legítima, e a que mais vezes aparece sem estilos — pré-compila no primeiro arranque, para `public/assets` no anfitrião.
 
 ### 8.1. Construção da Imagem
 
