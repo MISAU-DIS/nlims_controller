@@ -11,6 +11,8 @@ A aplicação opera em dois modos mutuamente exclusivos:
 
 O modo de operação é parametrizado exclusivamente pela variável de ambiente `SISLAB_SYNC_MODE`. A aplicação aborta a inicialização caso a variável não esteja definida. As rotas, jobs e tarefas específicas de cada modo são carregadas condicionalmente.
 
+O fluxo de branches, as regras de commits e de pull requests e a publicação de releases estão no [Guia de Contribuição](CONTRIBUTING.md).
+
 ---
 
 ## 1. Requisitos do Sistema
