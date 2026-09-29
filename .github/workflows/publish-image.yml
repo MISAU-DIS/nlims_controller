@@ -1,0 +1,76 @@
+name: Publish image
+
+# Builds the production image once and publishes it to GHCR. Servers never build
+# anything: the sislab-agent on each one reads the version it is assigned in
+# instalacoes.yml (MISAU-DIS/sislab-deploy, key `sync:`) and pulls it from here.
+#
+#   push to dev          -> ghcr.io/misau-dis/sislab_sync:dev       (+ :sha-<commit>)
+#   push to preview      -> ghcr.io/misau-dis/sislab_sync:preview   (+ :sha-<commit>)
+#   release published    -> ghcr.io/misau-dis/sislab_sync:vX.Y.Z    (+ :sha-<commit>)
+#                           and sislab-sync-vX.Y.Z.tar.gz attached to the release,
+#                           for sites with no internet (sislab-agent offline <file>)
+#
+# The release has to be created with a personal token (gh release create ...):
+# releases created by another workflow's GITHUB_TOKEN do not trigger this one.
+on:
+  push:
+    branches: [dev, preview]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-image-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/misau-dis/sislab_sync
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write   # attach the .tar.gz to the release
+      packages: write   # publish to GHCR
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,prefix=sha-
+
+      # The last stage of the Dockerfile is the production image; the
+      # `development` stage is only for docker-compose on a workstation.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Attach the image to the release (offline sites)
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          docker pull "$IMAGE:$TAG"
+          docker save "$IMAGE:$TAG" | gzip > "sislab-sync-$TAG.tar.gz"
+          gh release upload "$TAG" "sislab-sync-$TAG.tar.gz" --clobber
