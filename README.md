@@ -170,6 +170,7 @@ A chave utilizada pelo nó local deve ser previamente emitida no nó nacional pa
 | Variável | Descrição |
 | --- | --- |
 | `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD` | Parâmetros de ligação TCP ao servidor MySQL. |
+| `DATABASE_SOCKET` | Socket Unix de um MySQL no anfitrião, com `DATABASE_HOST=localhost`. Vazio: ligação TCP. |
 | `DATABASE_NAME` | Nome da base de dados relacional da aplicação. |
 | `TEST_DATABASE_NAME` | Nome da base de dados dedicada à execução de testes automatizados (padrão: `sislab_sync_test`). |
 | `REDIS_URL` | URI de ligação ao servidor Redis. |
@@ -389,6 +390,8 @@ Em produção utiliza-se a imagem final do `Dockerfile`, distinta do estágio `d
 
 ### 8.1. Construção da Imagem
 
+Nos servidores do SISLAB a imagem não se constrói: o workflow *Publish image* publica-a em `ghcr.io/misau-dis/sislab_sync` (`:dev` a cada push em `dev`, `:preview` em `preview`, `:vX.Y.Z` a cada release, com o `sislab-sync-vX.Y.Z.tar.gz` anexado para instalações sem internet), e o `sislab-agent` do [MISAU-DIS/sislab-deploy](https://github.com/MISAU-DIS/sislab-deploy) aplica a versão que a chave `sync:` do `instalacoes.yml` atribui a cada laboratório. Construção manual:
+
 ```bash
 docker build -t sislab_sync:4.0.0 .
 ```
@@ -414,7 +417,7 @@ Em ambiente `production` a aplicação requer um segredo, fornecido por uma das 
 | `SISLAB_SYNC_MODE` | `local` \| `national` | |
 | `SISLAB_SYNC_FACILITY_CODE` | `HCM` | Obrigatória em modo `local`; identifica a unidade sanitária no registo nacional e prefixa os números de rastreio. |
 | `SISLAB_SYNC_TLS_TERMINATED` | `true` | `false` se o nó for servido em HTTP simples (ver 8.5). |
-| `DATABASE_HOST`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME` | | MySQL 8.4 com `transaction_isolation=READ-COMMITTED`. |
+| `DATABASE_HOST`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME` | | MySQL 8.4 com `transaction_isolation=READ-COMMITTED`. `DATABASE_SOCKET` para um MySQL do anfitrião ligado pelo socket. |
 | `REDIS_URL` | `redis://redis:6379/0` | Cache, limitação de taxa e filas Sidekiq. |
 | `SISLAB_SYNC_NATIONAL_URL`, `SISLAB_SYNC_NATIONAL_API_KEY` | | Modo `local`, para replicação com o nó nacional. |
 

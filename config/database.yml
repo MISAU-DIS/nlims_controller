@@ -7,6 +7,9 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
   host: <%= ENV.fetch("DATABASE_HOST", "127.0.0.1") %>
   port: <%= ENV.fetch("DATABASE_PORT", 3306) %>
+  # For a MySQL on the host reached through its Unix socket, with
+  # DATABASE_HOST=localhost. Blank means TCP to the host above.
+  socket: <%= ENV["DATABASE_SOCKET"] %>
   username: <%= ENV.fetch("DATABASE_USER", "root") %>
   password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
   variables:
