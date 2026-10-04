@@ -1,6 +1,6 @@
 {
   "meta": {
-    "taken_at": "2026-08-30T11:32:08+02:00",
+    "taken_at": "2026-10-04T10:24:27+02:00",
     "source": "root@127.0.0.1/mlab"
   },
   "departments": [
@@ -5763,7 +5763,7 @@
     },
     {
       "id": 67,
-      "name": "Clue cells",
+      "name": "Células-guia",
       "unit": "",
       "description": "",
       "test_indicator_type": 0,
@@ -7580,8 +7580,8 @@
     {
       "id": 294,
       "name": "Carga viral",
-      "unit": "",
-      "description": "",
+      "unit": "cópias/mL",
+      "description": "RNA do HIV-1 em cópias/mL. Aceita número, <40, >10000000 ou Não detectado (supressão viral: menos de 1000 cópias/mL)",
       "test_indicator_type": 1,
       "value_type": "Free Text"
     },
@@ -9472,6 +9472,30 @@
       "description": "Conclusão do algoritmo de testagem rápida de HIV (valor de referência: Negativo)",
       "test_indicator_type": 0,
       "value_type": "AutoComplete"
+    },
+    {
+      "id": 535,
+      "name": "Interpretação",
+      "unit": "",
+      "description": "Leitura clínica da carga viral. Falência virológica exige duas medidas de 1000 cópias/mL ou mais, com 3 a 6 meses de intervalo",
+      "test_indicator_type": 0,
+      "value_type": "AutoComplete"
+    },
+    {
+      "id": 536,
+      "name": "Número de ciclo",
+      "unit": "Ct",
+      "description": "Ciclo limiar (Ct) da amplificação, lido no ecrã de detalhe do Xpert. Informativo, sem valor de referência",
+      "test_indicator_type": 2,
+      "value_type": "Numeric"
+    },
+    {
+      "id": 537,
+      "name": "EID",
+      "unit": "",
+      "description": "PCR de ácidos nucleicos totais do HIV-1 (Xpert HIV-1 Qual) em criança exposta (valor de referência: Negativo)",
+      "test_indicator_type": 0,
+      "value_type": "AutoComplete"
     }
   ],
   "indicator_ranges": [
@@ -9762,7 +9786,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Crescimento"
     },
     {
@@ -9812,7 +9836,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Crescimento"
     },
     {
@@ -9862,7 +9886,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -9872,7 +9896,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -9882,7 +9906,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -9892,7 +9916,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -10952,7 +10976,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -10972,7 +10996,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -10982,7 +11006,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -11002,7 +11026,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -11012,7 +11036,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -11072,7 +11096,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12212,7 +12236,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -12222,7 +12246,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -12232,7 +12256,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -12242,7 +12266,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -12252,7 +12276,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -12262,7 +12286,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -12272,7 +12296,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -12282,7 +12306,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -12292,7 +12316,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -12302,7 +12326,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -12312,7 +12336,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -12322,7 +12346,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -12392,7 +12416,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12402,37 +12426,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
-      "value": "Negativo"
-    },
-    {
-      "test_indicator_id": 116,
-      "min_age": null,
-      "max_age": null,
-      "sex": null,
-      "lower_range": null,
-      "upper_range": null,
-      "interpretation": "",
-      "value": "Inválido"
-    },
-    {
-      "test_indicator_id": 116,
-      "min_age": null,
-      "max_age": null,
-      "sex": null,
-      "lower_range": null,
-      "upper_range": null,
-      "interpretation": "POSITIVE",
-      "value": "Positivo"
-    },
-    {
-      "test_indicator_id": 116,
-      "min_age": null,
-      "max_age": null,
-      "sex": null,
-      "lower_range": null,
-      "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12446,13 +12440,43 @@
       "value": "Inválido"
     },
     {
+      "test_indicator_id": 116,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Positivo",
+      "value": "Positivo"
+    },
+    {
+      "test_indicator_id": 116,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Negativo",
+      "value": "Negativo"
+    },
+    {
+      "test_indicator_id": 116,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "",
+      "value": "Inválido"
+    },
+    {
       "test_indicator_id": 117,
       "min_age": null,
       "max_age": null,
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12462,7 +12486,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12472,7 +12496,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12482,7 +12506,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12492,7 +12516,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12502,7 +12526,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12512,7 +12536,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12522,7 +12546,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12532,7 +12556,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12542,7 +12566,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12552,7 +12576,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12562,7 +12586,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12572,7 +12596,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12582,7 +12606,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12592,7 +12616,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -12602,7 +12626,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -12612,7 +12636,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo (DO>0,2)"
     },
     {
@@ -12622,7 +12646,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo (DO<0,1)"
     },
     {
@@ -12642,7 +12666,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo (DO>0,2)"
     },
     {
@@ -12652,7 +12676,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo (DO<0,1)"
     },
     {
@@ -12672,7 +12696,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo (DO>0,2)"
     },
     {
@@ -12682,7 +12706,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo (DO<0,1)"
     },
     {
@@ -12702,7 +12726,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo (DO>0,2)"
     },
     {
@@ -12712,7 +12736,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo (DO<0,1)"
     },
     {
@@ -14102,7 +14126,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -14112,7 +14136,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -14122,7 +14146,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Reactivo"
     },
     {
@@ -14132,7 +14156,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Não reactivo"
     },
     {
@@ -14462,7 +14486,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -14482,7 +14506,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -14492,7 +14516,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -15122,7 +15146,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Positivo"
     },
     {
@@ -15132,7 +15156,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "NEGATIVE",
+      "interpretation": "Negativo",
       "value": "Negativo"
     },
     {
@@ -15182,7 +15206,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "POSITIVE",
+      "interpretation": "Positivo",
       "value": "Crescimento"
     },
     {
@@ -15432,7 +15456,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Non reactive",
+      "interpretation": "Não reactivo",
       "value": "Negativo"
     },
     {
@@ -15442,7 +15466,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Reactive",
+      "interpretation": "Reactivo",
       "value": "Positivo"
     },
     {
@@ -15452,7 +15476,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Non reactive",
+      "interpretation": "Não reactivo",
       "value": "Negativo"
     },
     {
@@ -15462,7 +15486,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Reactive",
+      "interpretation": "Reactivo",
       "value": "Positivo"
     },
     {
@@ -18612,7 +18636,7 @@
       "sex": "Both",
       "lower_range": "4.0",
       "upper_range": "10.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18622,7 +18646,7 @@
       "sex": "Both",
       "lower_range": "4.0",
       "upper_range": "6.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18632,7 +18656,7 @@
       "sex": "Both",
       "lower_range": "10.9",
       "upper_range": "17.3",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18642,7 +18666,7 @@
       "sex": "Both",
       "lower_range": "32.0",
       "upper_range": "50.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18652,7 +18676,7 @@
       "sex": "Both",
       "lower_range": "71.0",
       "upper_range": "95.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18662,7 +18686,7 @@
       "sex": "Both",
       "lower_range": "23.0",
       "upper_range": "34.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18672,7 +18696,7 @@
       "sex": "Both",
       "lower_range": "33.0",
       "upper_range": "36.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18682,7 +18706,7 @@
       "sex": "Both",
       "lower_range": "122.0",
       "upper_range": "330.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18732,7 +18756,7 @@
       "sex": "Both",
       "lower_range": "10.0",
       "upper_range": "16.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18742,7 +18766,7 @@
       "sex": "Both",
       "lower_range": "9.0",
       "upper_range": "17.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18752,7 +18776,7 @@
       "sex": "Both",
       "lower_range": "6.0",
       "upper_range": "10.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18762,7 +18786,7 @@
       "sex": "Both",
       "lower_range": "0.17",
       "upper_range": "0.35",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18772,7 +18796,7 @@
       "sex": "Both",
       "lower_range": "27.0",
       "upper_range": "60.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18782,7 +18806,7 @@
       "sex": "Both",
       "lower_range": "29.0",
       "upper_range": "59.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18792,7 +18816,7 @@
       "sex": "Both",
       "lower_range": "2.0",
       "upper_range": "10.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18882,7 +18906,7 @@
       "sex": "Both",
       "lower_range": "0.0",
       "upper_range": "12.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18892,7 +18916,7 @@
       "sex": "Both",
       "lower_range": "0.0",
       "upper_range": "1.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18902,7 +18926,7 @@
       "sex": "Both",
       "lower_range": "0.82",
       "upper_range": "4.1",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18912,7 +18936,7 @@
       "sex": "Both",
       "lower_range": "1.26",
       "upper_range": "3.62",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18922,7 +18946,7 @@
       "sex": "Both",
       "lower_range": "0.12",
       "upper_range": "0.56",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18932,7 +18956,7 @@
       "sex": "Both",
       "lower_range": "0.0",
       "upper_range": "0.78",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18942,7 +18966,7 @@
       "sex": "Both",
       "lower_range": "0.0",
       "upper_range": "0.07",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -18952,7 +18976,7 @@
       "sex": "Both",
       "lower_range": "30.0",
       "upper_range": "90.0",
-      "interpretation": "Range",
+      "interpretation": "Intervalo",
       "value": null
     },
     {
@@ -19492,7 +19516,7 @@
       "sex": "Both",
       "lower_range": "35.0",
       "upper_range": "51.9",
-      "interpretation": "ALBUMIN",
+      "interpretation": "ALBUMINA",
       "value": null
     },
     {
@@ -19502,7 +19526,7 @@
       "sex": "Both",
       "lower_range": "0.7",
       "upper_range": "3.4",
-      "interpretation": "BILURUBIM DIRECT",
+      "interpretation": "BILIRRUBINA DIRECTA",
       "value": null
     },
     {
@@ -19512,7 +19536,7 @@
       "sex": "Both",
       "lower_range": "2.4",
       "upper_range": "21.0",
-      "interpretation": "TOTAL BILURUBIM",
+      "interpretation": "BILIRRUBINA TOTAL",
       "value": null
     },
     {
@@ -19522,7 +19546,7 @@
       "sex": "Both",
       "lower_range": "4.0",
       "upper_range": "200.0",
-      "interpretation": "CHOLESTEROL",
+      "interpretation": "COLESTEROL",
       "value": null
     },
     {
@@ -19532,7 +19556,7 @@
       "sex": "Both",
       "lower_range": "71.0",
       "upper_range": "115.0",
-      "interpretation": "CREATINE",
+      "interpretation": "CREATININA",
       "value": null
     },
     {
@@ -19552,7 +19576,7 @@
       "sex": "Both",
       "lower_range": "7.17",
       "upper_range": "21.51",
-      "interpretation": "IRON",
+      "interpretation": "FERRO",
       "value": null
     },
     {
@@ -19572,7 +19596,7 @@
       "sex": "Both",
       "lower_range": "4.1",
       "upper_range": "5.9",
-      "interpretation": "GLUCOSE",
+      "interpretation": "GLICOSE",
       "value": null
     },
     {
@@ -19612,7 +19636,7 @@
       "sex": "Both",
       "lower_range": "64.0",
       "upper_range": "83.0",
-      "interpretation": "TOTAL PROTEINA",
+      "interpretation": "PROTEÍNA TOTAL",
       "value": null
     },
     {
@@ -19622,7 +19646,7 @@
       "sex": "Both",
       "lower_range": "2.5",
       "upper_range": "7.1",
-      "interpretation": "UREA",
+      "interpretation": "UREIA",
       "value": null
     },
     {
@@ -19662,7 +19686,7 @@
       "sex": "Both",
       "lower_range": "4.5",
       "upper_range": "100.0",
-      "interpretation": "AMYLASE",
+      "interpretation": "AMILASE",
       "value": null
     },
     {
@@ -19692,7 +19716,7 @@
       "sex": "Both",
       "lower_range": "0.08",
       "upper_range": "1.71",
-      "interpretation": "TRIGLYCERIDES",
+      "interpretation": "TRIGLICERÍDEOS",
       "value": null
     },
     {
@@ -19912,7 +19936,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Invalid",
+      "interpretation": "Inválido",
       "value": "Indeterminado"
     },
     {
@@ -19962,7 +19986,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Invalid",
+      "interpretation": "Inválido",
       "value": "Indeterminado"
     },
     {
@@ -20022,7 +20046,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Invalid",
+      "interpretation": "Inválido",
       "value": "Inválido"
     },
     {
@@ -20052,7 +20076,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Invalid",
+      "interpretation": "Inválido",
       "value": "Inválido"
     },
     {
@@ -20082,7 +20106,7 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Invalid",
+      "interpretation": "Inválido",
       "value": "Inválido"
     },
     {
@@ -20112,11 +20136,101 @@
       "sex": null,
       "lower_range": null,
       "upper_range": null,
-      "interpretation": "Indeterminate",
+      "interpretation": "Indeterminado",
       "value": "Indeterminado"
     },
     {
       "test_indicator_id": 534,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Inválido",
+      "value": "Inválido"
+    },
+    {
+      "test_indicator_id": 294,
+      "min_age": 0,
+      "max_age": 120,
+      "sex": "Both",
+      "lower_range": "0.0",
+      "upper_range": "999.0",
+      "interpretation": "Supressão viral (<1000 cópias/mL)",
+      "value": null
+    },
+    {
+      "test_indicator_id": 535,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Not detected",
+      "value": "Não detectado"
+    },
+    {
+      "test_indicator_id": 535,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Detected below LLoQ",
+      "value": "Detectado, abaixo do limite de quantificação (<40 cópias/mL)"
+    },
+    {
+      "test_indicator_id": 535,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Suppressed",
+      "value": "Suprimida (<1000 cópias/mL)"
+    },
+    {
+      "test_indicator_id": 535,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Not suppressed",
+      "value": "Não suprimida (≥1000 cópias/mL)"
+    },
+    {
+      "test_indicator_id": 535,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Invalid",
+      "value": "Inválido"
+    },
+    {
+      "test_indicator_id": 537,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Positive",
+      "value": "Positivo"
+    },
+    {
+      "test_indicator_id": 537,
+      "min_age": null,
+      "max_age": null,
+      "sex": null,
+      "lower_range": null,
+      "upper_range": null,
+      "interpretation": "Negative",
+      "value": "Negativo"
+    },
+    {
+      "test_indicator_id": 537,
       "min_age": null,
       "max_age": null,
       "sex": null,
@@ -20693,7 +20807,7 @@
       "short_name": "VL",
       "department_id": 9,
       "sex": "Both",
-      "target_tat": ""
+      "target_tat": "24 Hours"
     },
     {
       "id": 72,
@@ -20898,7 +21012,7 @@
     {
       "id": 109,
       "name": "Prolactina",
-      "short_name": "PROLACTIN",
+      "short_name": "PROLACTINA",
       "department_id": 10,
       "sex": "Female",
       "target_tat": "2 Hours"
@@ -20978,7 +21092,7 @@
     {
       "id": 140,
       "name": "TDR Cólera",
-      "short_name": "Cholera RDT",
+      "short_name": "TDR Cólera",
       "department_id": 2,
       "sex": "Both",
       "target_tat": "1 Hours"
@@ -20994,7 +21108,7 @@
     {
       "id": 142,
       "name": "Teste Rápido de Antígeno da Febre Tifóide",
-      "short_name": "Typhoid RDT",
+      "short_name": "TDR Febre Tifóide",
       "department_id": 2,
       "sex": "Both",
       "target_tat": ""
@@ -21046,6 +21160,14 @@
       "department_id": 1,
       "sex": "Both",
       "target_tat": "30 Minutes"
+    },
+    {
+      "id": 259,
+      "name": "Diagnóstico Precoce Infantil",
+      "short_name": "EID",
+      "department_id": 9,
+      "sex": "Both",
+      "target_tat": "24 Hours"
     }
   ],
   "test_type_indicator_links": [
@@ -22440,6 +22562,18 @@
     {
       "test_type_id": 138,
       "indicator_id": 534
+    },
+    {
+      "test_type_id": 71,
+      "indicator_id": 535
+    },
+    {
+      "test_type_id": 71,
+      "indicator_id": 536
+    },
+    {
+      "test_type_id": 259,
+      "indicator_id": 537
     }
   ],
   "test_type_specimen_links": [
@@ -23202,6 +23336,18 @@
     {
       "test_type_id": 258,
       "specimen_type_id": 3
+    },
+    {
+      "test_type_id": 259,
+      "specimen_type_id": 3
+    },
+    {
+      "test_type_id": 259,
+      "specimen_type_id": 19
+    },
+    {
+      "test_type_id": 259,
+      "specimen_type_id": 21
     }
   ],
   "test_type_organism_links": [
