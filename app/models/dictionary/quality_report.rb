@@ -98,20 +98,10 @@ module Dictionary
 
     def invalid_ranges
       IndicatorRange.includes(:indicator).filter_map do |range|
-        detail = range_problem(range)
+        detail = range.problem
         next unless detail
 
         issue_for(range.indicator, "invalid_range", detail)
-      end
-    end
-
-    def range_problem(range)
-      if range.range_lower && range.range_upper && range.range_lower > range.range_upper
-        "intervalo invertido (#{range.range_lower} > #{range.range_upper})"
-      elsif range.range_lower.nil? && range.range_upper.nil? && range.value.blank?
-        "intervalo sem limites nem valor"
-      elsif range.age_min && range.age_max && range.age_min > range.age_max
-        "idades invertidas (#{range.age_min} > #{range.age_max})"
       end
     end
 

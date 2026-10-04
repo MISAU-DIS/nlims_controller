@@ -41,6 +41,13 @@ class DictionaryController < ApplicationController
     @page = page
     @pages = [ (@total / PER_PAGE.to_f).ceil, 1 ].max
 
+    # How many links each listed entry carries, so a test with no indicators or
+    # a panel with no tests is visible in the list rather than only once opened.
+    ids = @entries.map(&:id)
+    @link_counts = Dictionary::Associations.for(@entity_type).map do |association|
+      [ association, association.counts_for(ids) ]
+    end
+
     # How much of this entity type has a LOINC code. Stated because it is the
     # gap S11 exists to close, and a percentage is what makes it a task rather
     # than a vague intention — but only where a LOINC code means anything. A

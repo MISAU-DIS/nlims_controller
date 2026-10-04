@@ -58,6 +58,9 @@
             <tr>
               <th class="px-5 py-2.5"><%= t("dictionary.columns.national_code") %></th>
               <th class="px-5 py-2.5"><%= t("dictionary.columns.name") %></th>
+              <% if @link_counts.any? %>
+                <th class="px-5 py-2.5"><%= t(".links") %></th>
+              <% end %>
               <th class="px-5 py-2.5"><%= t("dictionary.columns.loinc") %></th>
               <th class="px-5 py-2.5"><%= t("dictionary.columns.revision") %></th>
               <th class="px-5 py-2.5"><%= t("orders.columns.status") %></th>
@@ -71,11 +74,27 @@
               <tr class="hover:bg-slate-50">
                 <td class="px-5 py-2.5 font-mono text-xs text-slate-700"><%= entry.national_code %></td>
                 <td class="px-5 py-2.5">
-                  <span class="text-slate-900"><%= entry.name %></span>
+                  <% if SislabSync.national? && current_user.admin? %>
+                    <%= link_to entry.name, edit_dictionary_entry_path(@entity_type, entry.national_code),
+                          class: "text-slate-900 hover:underline" %>
+                  <% else %>
+                    <span class="text-slate-900"><%= entry.name %></span>
+                  <% end %>
                   <% if entry.short_name.present? && entry.short_name != entry.name %>
                     <span class="block text-xs text-slate-500"><%= entry.short_name %></span>
                   <% end %>
                 </td>
+                <% if @link_counts.any? %>
+                  <td class="px-5 py-2.5">
+                    <div class="flex flex-wrap gap-1">
+                      <% @link_counts.each do |association, counts| %>
+                        <% count = counts.fetch(entry.id, 0) %>
+                        <%= badge "#{t("dictionary.associations.#{@entity_type}.#{association.name}.title")} #{count}",
+                              tone: count.zero? && association.expected? ? :waiting : :neutral %>
+                      <% end %>
+                    </div>
+                  </td>
+                <% end %>
                 <td class="px-5 py-2.5">
                   <% if entry.loinc_code.present? %>
                     <span class="font-mono text-xs text-slate-700"><%= entry.loinc_code %></span>

@@ -133,6 +133,20 @@ Rails.application.routes.draw do
          as: :activate_dictionary_entry
     post "dictionary/:entity_type/:national_code/retire", to: "dictionary_entries#retire",
          as: :retire_dictionary_entry
+
+    # The links between entries, changed from the screen of either end, and an
+    # indicator's reference intervals.
+    scope "dictionary/:entity_type/:national_code/links/:association", controller: :dictionary_links do
+      post "", action: :create, as: :dictionary_links
+      post "new", action: :create_entry, as: :new_dictionary_link_entry
+      delete ":target_code", action: :destroy, as: :dictionary_link
+    end
+
+    scope "dictionary/indicators/:national_code/ranges", controller: :indicator_ranges do
+      post "", action: :create, as: :indicator_ranges
+      patch ":id", action: :update, as: :indicator_range
+      delete ":id", action: :destroy
+    end
   end
 
   get "dictionary/:entity_type", to: "dictionary#show", as: :dictionary_entity,

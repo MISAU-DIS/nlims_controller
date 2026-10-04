@@ -20,14 +20,21 @@ class DictionaryEntriesController < ApplicationController
 
     return render :new, status: :unprocessable_content unless @entry.save
 
-    redirect_to dictionary_entity_path(@entity_type),
+    # Straight to the entry's own screen: a new test is not finished until it
+    # has its indicators and specimen types, and that is where they are added.
+    redirect_to edit_dictionary_entry_path(@entity_type, @entry.national_code),
                 notice: t(".created", code: @entry.national_code, name: @entry.name)
   end
 
-  def edit; end
+  def edit
+    load_links
+  end
 
   def update
-    return render :edit, status: :unprocessable_content unless @entry.update(entry_params)
+    unless @entry.update(entry_params)
+      load_links
+      return render :edit, status: :unprocessable_content
+    end
 
     redirect_to dictionary_entity_path(@entity_type), notice: t(".updated", code: @entry.national_code)
   end
@@ -72,6 +79,14 @@ class DictionaryEntriesController < ApplicationController
 
   def set_entry
     @entry = @model.find_by!(national_code: params[:national_code])
+  end
+
+  # What the entry is linked to, from either end, and an indicator's ranges.
+  def load_links
+    @associations = Dictionary::Associations.for(@entity_type).map do |association|
+      [ association, association.linked(@entry).to_a ]
+    end
+    @ranges = @entry.indicator_ranges.order(:sex, :age_min, :id).to_a if @entry.is_a?(Indicator)
   end
 
   def entry_params

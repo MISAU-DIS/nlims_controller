@@ -1,4 +1,8 @@
 <% content_for :title, @entry.national_code %>
+<%# Every link and range change redirects back here. Morphing keeps the scroll
+    position, so working down a list of indicators does not jump to the top
+    after each one. %>
+<% content_for :head, turbo_refreshes_with(method: :morph, scroll: :preserve) %>
 
 <%= link_to t("dictionary.entities.#{@entity_type}"), dictionary_entity_path(@entity_type),
       class: "text-xs text-slate-500 hover:text-slate-900" %>
@@ -12,17 +16,58 @@
   <%= @entry.national_code %> · <%= t("dictionary.columns.revision") %> <%= @entry.revision %>
 </p>
 
-<div class="mt-6 max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-  <%= render "form", entry: @entry, entity_type: @entity_type %>
-</div>
+<% if @entry.active? %>
+  <p class="mt-3 max-w-prose text-sm text-slate-600"><%= t(".published_lede") %></p>
+<% end %>
 
-<div class="mt-6 flex max-w-2xl flex-wrap gap-3">
-  <% if @entry.draft? %>
-    <%= button_to t("dictionary.show.activate"), activate_dictionary_entry_path(@entity_type, @entry.national_code),
-          class: "rounded-md border border-emerald-300 bg-white px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50" %>
-  <% elsif @entry.active? %>
-    <%= button_to t("dictionary.show.retire"), retire_dictionary_entry_path(@entity_type, @entry.national_code),
-          form: { data: { turbo_confirm: t("dictionary.show.retire_confirm", name: @entry.name) } },
-          class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+<% if @associations.any? || @ranges %>
+  <nav class="mt-4 flex flex-wrap gap-2 text-xs" aria-label="<%= t(".sections") %>">
+    <% if @ranges %>
+      <a href="#ranges" class="rounded-full border border-slate-300 bg-white px-3 py-1 text-slate-700 hover:bg-slate-50">
+        <%= t("dictionary.ranges.title") %> <span class="tabular text-slate-500"><%= @ranges.size %></span>
+      </a>
+    <% end %>
+    <% @associations.each do |association, linked| %>
+      <% missing = linked.empty? && association.expected? %>
+      <a href="#links-<%= association.name %>"
+         class="rounded-full border px-3 py-1 hover:bg-slate-50 <%= missing ? "border-amber-300 bg-amber-50 text-amber-900" : "border-slate-300 bg-white text-slate-700" %>">
+        <%= t("dictionary.associations.#{@entity_type}.#{association.name}.title") %>
+        <span class="tabular <%= missing ? "text-amber-700" : "text-slate-500" %>"><%= linked.size %></span>
+      </a>
+    <% end %>
+  </nav>
+<% end %>
+
+<%# Full width: seven columns of inputs do not fit beside the form. %>
+<% if @ranges %>
+  <div class="mt-6">
+    <%= render "ranges", indicator: @entry, ranges: @ranges %>
+  </div>
+<% end %>
+
+<div class="mt-6 grid items-start gap-6 <%= "xl:grid-cols-5" if @associations.any? %>">
+  <div class="space-y-4 xl:col-span-2">
+    <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <%= render "form", entry: @entry, entity_type: @entity_type %>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <% if @entry.draft? %>
+        <%= button_to t("dictionary.show.activate"), activate_dictionary_entry_path(@entity_type, @entry.national_code),
+              class: "rounded-md border border-emerald-300 bg-white px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50" %>
+      <% elsif @entry.active? %>
+        <%= button_to t("dictionary.show.retire"), retire_dictionary_entry_path(@entity_type, @entry.national_code),
+              form: { data: { turbo_confirm: t("dictionary.show.retire_confirm", name: @entry.name) } },
+              class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @associations.any? %>
+    <div class="space-y-6 xl:col-span-3">
+      <% @associations.each do |association, linked| %>
+        <%= render "association", entry: @entry, entity_type: @entity_type, association: association, linked: linked %>
+      <% end %>
+    </div>
   <% end %>
 </div>
