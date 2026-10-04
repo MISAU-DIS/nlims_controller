@@ -122,13 +122,24 @@ A chave não carrega laboratório nenhum. Uma instância do mLab fala por todos 
 | `app` | Servidor de aplicação HTTP Puma na porta `APP_PORT` (padrão: 3000). Executa a rotina de verificação e migração de base de dados na inicialização. |
 | `sidekiq` | Processador de tarefas assíncronas e agendadas em segundo plano (sincronização de outbox, pooling de dicionário e encaminhamentos). |
 | `css` | Compilador do Tailwind CSS em modo de monitorização contínua (*watch*). Utilizado em ambiente de desenvolvimento. |
-| `mysql` | Sistema de Gestão de Base de Dados Relacional MySQL 8.4 LTS. |
+| `mysql` | MySQL 8.4 LTS em contentor. **Opcional** (perfil `mysql`): por omissão a base de dados fica no MySQL do próprio servidor, fora dos contentores. |
 | `redis` | Servidor Redis 7 para gestão de filas do Sidekiq e armazenamento temporário de rate limiting. |
+
+A base de dados não vive em nenhum contentor. A aplicação liga-se ao MySQL do servidor pelo socket Unix (`/run/mysqld/mysqld.sock`, montado a partir de `MYSQL_SOCKET_DIR`), pelo que recriar o stack, ou apagar os volumes, não toca nos dados — e as cópias de segurança e as contas do MySQL do servidor cobrem-na como a qualquer outra base. A base é criada no primeiro arranque (`db:prepare`), por isso o utilizador indicado precisa de `CREATE` sobre ela:
+
+```sql
+CREATE USER 'sislab_sync'@'localhost' IDENTIFIED BY '...';
+GRANT ALL PRIVILEGES ON `sislab\_sync\_%`.* TO 'sislab_sync'@'localhost';
+```
+
+No Docker Desktop os contentores correm numa VM onde o socket do servidor não chega; aí a ligação é por TCP, com `DATABASE_HOST=host.docker.internal` e `DATABASE_SOCKET=` (vazio), e o utilizador tem de existir também como `'sislab_sync'@'127.0.0.1'`.
+
+Numa máquina sem MySQL próprio, o contentor continua disponível: `COMPOSE_PROFILES=mysql`, `DATABASE_HOST=mysql` e `DATABASE_SOCKET=` (vazio) no `.env`.
 
 Comandos operacionais frequentes:
 
 ```bash
-docker compose up -d mysql redis      # Inicialização exclusiva da infraestrutura de dados
+docker compose up -d redis            # Inicialização exclusiva da infraestrutura de dados
 docker compose logs -f app            # Acompanhamento contínuo de logs da aplicação
 docker compose exec app bin/rails c   # Acesso à consola interativa do Rails
 docker compose down                   # Encerramento dos contentores
@@ -171,8 +182,9 @@ A chave utilizada pelo nó local deve ser previamente emitida no nó nacional pa
 
 | Variável | Descrição |
 | --- | --- |
-| `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD` | Parâmetros de ligação TCP ao servidor MySQL. |
-| `DATABASE_SOCKET` | Socket Unix de um MySQL no anfitrião, com `DATABASE_HOST=localhost`. Vazio: ligação TCP. |
+| `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD` | Parâmetros de ligação ao servidor MySQL. No Docker Compose, `DATABASE_HOST` vale `localhost` por omissão, o que faz o cliente usar o socket. |
+| `DATABASE_SOCKET` | Socket Unix do MySQL; tem precedência sobre host e porta. No Docker Compose vale `/run/mysqld/mysqld.sock` por omissão; vazio para ligar por TCP. |
+| `MYSQL_SOCKET_DIR` | Directório do socket no servidor, montado em `/run/mysqld` (padrão: `/run/mysqld`; `/var/run/mysqld` em algumas distribuições). |
 | `DATABASE_NAME` | Nome da base de dados relacional da aplicação. |
 | `TEST_DATABASE_NAME` | Nome da base de dados dedicada à execução de testes automatizados (padrão: `sislab_sync_test`). |
 | `REDIS_URL` | URI de ligação ao servidor Redis. |
