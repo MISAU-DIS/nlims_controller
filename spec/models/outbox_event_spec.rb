@@ -173,11 +173,16 @@ RSpec.describe OutboxEvent, mode: :local do
     # The instant is pinned rather than read twice: the method reads the clock
     # inside and the expectation read it again outside, so a tick between the
     # two put the answer past the bound and failed the run at random.
+    #
+    # The jitter is bounded in whole seconds, as the implementation computes it.
+    # Dividing the Duration itself truncates its parts (30.minutes / 4 is
+    # 7 minutes, not 450 seconds), which puts the bound below the largest jitter.
     it "caps how long it will ever wait" do
       now = Time.current
+      max = described_class::Backoff::MAX.to_i
 
       expect(described_class::Backoff.next_attempt_at(50, now: now))
-        .to be <= (now + described_class::Backoff::MAX + (described_class::Backoff::MAX / 4))
+        .to be <= (now + max + (max / 4))
     end
   end
 

@@ -1,23 +1,23 @@
-# Graph Report - nlims_controller  (2026-09-02)
+# Graph Report - nlims_controller  (2026-10-04)
 
 ## Corpus Check
-- 333 files · ~400,304 words
+- 338 files · ~403,359 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2001 nodes · 2846 edges · 251 communities (172 shown, 79 thin omitted)
+- 2043 nodes · 2902 edges · 265 communities (180 shown, 85 thin omitted)
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 255 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `02637fa2`
+- Built from commit: `d28402d8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - InboundEvent
 - ApiKey
-- DictionaryEntriesController
+- Dictionary::SnapshotSource
 - SislabSyncClient::Connection
 - Fhir::OrderIntake
 - ApiContract::Operation
@@ -41,7 +41,7 @@
 - .api_client
 - Fhir::CapabilityStatement
 - OutboxEvent
-- .render_api_error
+- Api::Errors
 - .post
 - OrderRequest
 - Fhir::BaseController
@@ -52,8 +52,7 @@
 - .auth_headers
 - Fhir::ObservationResource
 - ApplicationController
-- .authorize_scope!
-- .render_resource
+- Api::V3::Lab::OrdersController
 - Sequence
 - SislabSyncClient::Emr
 - LabReport
@@ -61,7 +60,7 @@
 - sislab_sync.rb
 - Fhir::ObservationsController
 - Order
-- Dictionary::LoincCoverage::Row
+- Dictionary::LoincCoverage
 - app service (Puma)
 - .from_env
 - Api::V3::Sync::EventsController
@@ -74,9 +73,9 @@
 - StatusEvent
 - Fhir::DiagnosticReportResource
 - SISLAB Sync v2 rebuild plan
-- NodeTransport
+- .authorize_scope!
 - Authentication
-- Fhir::ServiceRequestsController
+- OrderTest
 - UiHelper
 - SislabSyncClient::Feed
 - TracksStatus
@@ -85,21 +84,21 @@
 - Session
 - .render_api_error
 - Dictionary::LoincSuggestions
-- Api::BaseController
+- ApiClient
 - TestType
 - AddedTests
 - MlabFixtureSource
 - RecordedInbound
 - .create
 - sislab_sync_client reference gem
-- OrderTest
+- Fhir::SpecimenResource
 - Fhir::Bundle
 - .token_value
 - Fhir::CodeableConcept
 - SislabSyncClient::Profile
-- Fhir::TransactionsController
-- Dictionary::LoincCoverage
-- .for
+- .create
+- .call
+- OrderSerializer
 - Sync::Pull
 - Sync::Push
 - SislabSyncClient::Node
@@ -115,26 +114,27 @@
 - Api::V3::OrderRequestsController
 - DictionaryController
 - NavigationHelper
-- Dictionary::Puller
+- Dictionary::Promotion
 - Lab
 - Lab client profile
 - moz_catalog.rake
 - Application Icon (Solid Red Circle, 512x512 PNG)
-- Api
+- DictionaryEntriesController
 - Dictionary::Link
 - tracking_number.rb
 - CreateDictionaryEntities
 - National dictionary and its synchronisation
 - observations_spec.rb
 - OrdersHelper
-- DashboardController
+- Dictionary::Associations::Association
 - User
 - Api::V3::ResultsController
 - SislabSync
 - CreateSequences
-- v3/dictionary_spec.rb
+- TestPanel
 - SignInHelpers
 - ApplicationMailer
+- .attribute_names_for
 - DictionaryReference
 - CreateApiClients
 - CreateApiKeys
@@ -169,14 +169,25 @@
 - version.rb
 - 400 Bad Request static page
 - 404 Not Found static page
+- DictionaryLinksController
+- IndicatorRangesController
+- AuditsController
 - SessionsController
+- Api::V3::NodesController
+- Fhir::PatientResource
 - OrdersArriveAtAFacility
 - order_requests_spec.rb
+- OrderTestSerializer
+- Facility
 - CreateFacilities
 - CLAUDE.md
+- SyncPushJob
+- Indicator
+- DictionaryHelper
+- RejectionReason
 
 ## God Nodes (most connected - your core abstractions)
-1. `ApplicationRecord` - 43 edges
+1. `ApplicationRecord` - 44 edges
 2. `Order` - 36 edges
 3. `Dictionary::MlabApiSource` - 33 edges
 4. `Referral` - 33 edges
@@ -208,19 +219,19 @@
 - **Browser and Install Icon Surface** — public_icon_app_icon, public_icon_pwa_manifest_icon_slot, public_icon_favicon_and_apple_touch_icon_slot, public_icon_single_asset_serves_every_icon_role [INFERRED 0.85]
 - **Revision cursor discipline across surfaces** — docs_sislab_sync_plano_revision_cursor, docs_sislab_sync_openapi_cursor_pagination, readme_fhir_results_feed, clients_ruby_readme_cursor_paging, config_database_read_committed [INFERRED 0.85]
 
-## Communities (251 total, 79 thin omitted)
+## Communities (265 total, 85 thin omitted)
 
 ### Community 0 - "InboundEvent"
 Cohesion: 0.05
-Nodes (15): InboundDelivery, InboundEvent, SyncCursor, Sync, Sync::Ingest, Sync::Ingest::Result, Sync, Sync::Routing (+7 more)
+Nodes (14): InboundDelivery, InboundEvent, SyncCursor, Sync, Sync::Ingest, Sync::Ingest::Result, Sync, Sync::Routing (+6 more)
 
 ### Community 1 - "ApiKey"
-Cohesion: 0.05
-Nodes (13): ApiClientsController, ApiKeysController, AuditsController, ApiClient, ApiKey, authenticate(), digest(), environment_segment() (+5 more)
+Cohesion: 0.10
+Nodes (7): ApiKeysController, ApiKey, authenticate(), digest(), environment_segment(), extract_prefix(), issue!()
 
-### Community 2 - "DictionaryEntriesController"
-Cohesion: 0.05
-Nodes (12): DictionaryEntriesController, Dictionary, Dictionary::Editable, Dictionary::Editable::Field, Dictionary, Dictionary::Promotion, Dictionary, Dictionary::Seed (+4 more)
+### Community 2 - "Dictionary::SnapshotSource"
+Cohesion: 0.12
+Nodes (6): Dictionary, Dictionary::Seed, Dictionary, Dictionary::SnapshotSource, Dictionary::SnapshotSource::Missing, StandardError
 
 ### Community 3 - "SislabSyncClient::Connection"
 Cohesion: 0.07
@@ -231,12 +242,12 @@ Cohesion: 0.08
 Nodes (19): ApiContract, ApiContract::Operation, expand(), operation_for(), operations(), resolve(), runs_here?(), this_node() (+11 more)
 
 ### Community 6 - "Current"
-Cohesion: 0.11
-Nodes (8): Api, Api::Auditing, Api, Api::RateLimiting, Current, next_sequence_for(), record!(), CurrentAttributes
+Cohesion: 0.09
+Nodes (11): Api, Api::BaseController, Api, Api::Auditing, Api, Api::RateLimiting, Current, next_sequence_for() (+3 more)
 
 ### Community 7 - "Dictionary::MlabApiSource"
-Cohesion: 0.08
-Nodes (4): Dictionary, Dictionary::MlabApiSource, Dictionary::MlabApiSource::Error, StandardError
+Cohesion: 0.06
+Nodes (7): Dictionary, Dictionary::MlabApiSource, Dictionary::MlabApiSource::Error, StandardError, NodeTransport, NodeTransport::TransportError, StandardError
 
 ### Community 8 - "Dictionary::MlabImporter"
 Cohesion: 0.12
@@ -247,8 +258,8 @@ Cohesion: 0.11
 Nodes (5): Sync, Sync::Applier, StandardError, Sync, Sync::Rejected
 
 ### Community 10 - "ApplicationRecord"
-Cohesion: 0.08
-Nodes (13): ApplicationRecord, Base, BumpsOwnerRevision, Drug, IndicatorRange, Node, OrganismDrug, TestPanelTestType (+5 more)
+Cohesion: 0.10
+Nodes (9): ApplicationRecord, Base, BumpsOwnerRevision, IndicatorRange, Node, TestPanelTestType, TestTypeIndicator, TestTypeOrganism (+1 more)
 
 ### Community 11 - "Dictionary::Applier"
 Cohesion: 0.09
@@ -258,33 +269,29 @@ Nodes (8): Dictionary, Dictionary::Applier, DictionaryLinkDeferral, DictionarySt
 Cohesion: 0.10
 Nodes (7): Dictionary, Dictionary::LoincCatalogue, Dictionary::LoincCatalogue::Entry, Dictionary::LoincCatalogue::MissingFile, StandardError, load_catalogue(), LoincFixture
 
-### Community 13 - "Fhir::ServiceRequestResource"
-Cohesion: 0.10
-Nodes (4): Fhir, Fhir::ServiceRequestResource, Fhir, Fhir::SpecimenResource
-
 ### Community 14 - "Referral"
-Cohesion: 0.10
-Nodes (4): ReferralsController, StandardError, Referral, Referral::AlreadySettled
+Cohesion: 0.09
+Nodes (5): ReferralsController, StandardError, Referral, Referral::AlreadySettled, dispatch_referral()
 
 ### Community 15 - "seeds.rb"
-Cohesion: 0.15
-Nodes (20): Department, RejectionReason, SpecimenType, call(), dictionary(), indicator(), national_catalogue(), nodes() (+12 more)
+Cohesion: 0.16
+Nodes (21): Department, SpecimenType, api_client(), call(), dictionary(), indicator(), national_catalogue(), nodes() (+13 more)
 
 ### Community 16 - "Dictionary::QualityReport"
-Cohesion: 0.13
-Nodes (4): Dictionary, Dictionary::QualityReport, Dictionary::QualityReport::Issue, Indicator
+Cohesion: 0.16
+Nodes (3): Dictionary, Dictionary::QualityReport, Dictionary::QualityReport::Issue
 
 ### Community 17 - "DictionaryEntry"
-Cohesion: 0.11
-Nodes (4): DictionaryEntry, DictionaryEntry::Withdrawn, StandardError, Organism
+Cohesion: 0.10
+Nodes (5): DictionaryEntry, DictionaryEntry::Withdrawn, StandardError, Drug, Organism
 
 ### Community 18 - "Dictionary::Serializer"
-Cohesion: 0.09
-Nodes (10): changes_since(), cursor(), delta(), Dictionary, Dictionary::UnknownEntity, model_for(), model_for!(), StandardError (+2 more)
+Cohesion: 0.10
+Nodes (9): changes_since(), delta(), Dictionary, Dictionary::UnknownEntity, model_for(), model_for!(), StandardError, Dictionary (+1 more)
 
 ### Community 19 - ".authorize_facility!"
-Cohesion: 0.11
-Nodes (9): Api, Api::V3, Api::V3::OrdersController, BaseController, Fhir, Fhir::SpecimensController, BaseController, BaseController (+1 more)
+Cohesion: 0.14
+Nodes (4): Api, Api::Authentication, BaseController, SpecProbeController
 
 ### Community 21 - "SislabSyncClient::Lab"
 Cohesion: 0.20
@@ -295,7 +302,7 @@ Cohesion: 0.19
 Nodes (3): MlabApiStub, MlabApiStub::NotFound, TransportError
 
 ### Community 23 - ".api_client"
-Cohesion: 0.17
+Cohesion: 0.24
 Nodes (3): Api, Api::Idempotency, IdempotentRequest
 
 ### Community 24 - "Fhir::CapabilityStatement"
@@ -303,11 +310,11 @@ Cohesion: 0.11
 Nodes (5): Fhir, Fhir::CapabilityController, BaseController, Fhir, Fhir::CapabilityStatement
 
 ### Community 25 - "OutboxEvent"
-Cohesion: 0.12
-Nodes (3): SyncQueueController, OutboxEvent, OutboxEvent::Backoff
+Cohesion: 0.11
+Nodes (6): SyncQueueController, OutboxEvent, OutboxEvent::Backoff, Sync, Sync::Heartbeat, failing_event()
 
-### Community 26 - ".render_api_error"
-Cohesion: 0.18
+### Community 26 - "Api::Errors"
+Cohesion: 0.20
 Nodes (4): Api, Api::Errors, Fhir, Fhir::OperationOutcome
 
 ### Community 27 - ".post"
@@ -324,19 +331,23 @@ Nodes (7): Dictionary, Dictionary::Loinc, Dictionary, Dictionary::LoincMapping, 
 
 ### Community 33 - "TestResult"
 Cohesion: 0.15
-Nodes (4): TestResult, an_hour_of_work(), clear_the_node(), push()
+Nodes (3): TestResult, an_hour_of_work(), clear_the_node()
 
 ### Community 34 - ".auth_headers"
-Cohesion: 0.14
-Nodes (9): post_probe(), patch_status(), claim(), get_pending(), get_order(), get_results(), acknowledge(), get_results() (+1 more)
+Cohesion: 0.11
+Nodes (10): post_probe(), patch_status(), get_changes(), claim(), get_pending(), get_order(), get_results(), acknowledge() (+2 more)
 
 ### Community 36 - "ApplicationController"
-Cohesion: 0.22
-Nodes (4): ApiDocsController, ApplicationController, Base, NodesController
+Cohesion: 0.15
+Nodes (5): ApiDocsController, ApplicationController, Base, DashboardController, NodesController
+
+### Community 37 - "Api::V3::Lab::OrdersController"
+Cohesion: 0.12
+Nodes (5): Api, Api::V3, Api::V3::Lab, Api::V3::Lab::OrdersController, BaseController
 
 ### Community 39 - "Sequence"
-Cohesion: 0.17
-Nodes (3): StandardError, Sequence, Sequence::NotInTransaction
+Cohesion: 0.14
+Nodes (4): cursor(), StandardError, Sequence, Sequence::NotInTransaction
 
 ### Community 40 - "SislabSyncClient::Emr"
 Cohesion: 0.15
@@ -347,31 +358,35 @@ Cohesion: 0.17
 Nodes (16): each_page cursor paging, Emr client profile, Client-side Idempotency-Key, Clinical term resolution policy, SISLAB Sync OpenAPI 3.1 contract, createOrderRequest operation, Cursor pagination (since / next_cursor / has_more), Duplicate /api/v3/results path entry (+8 more)
 
 ### Community 43 - "sislab_sync.rb"
-Cohesion: 0.10
-Nodes (10): Facility, facility(), fetch_facility_code(), labs(), local?(), national?(), StandardError, SislabSync (+2 more)
+Cohesion: 0.14
+Nodes (8): facility(), fetch_facility_code(), labs(), local?(), national?(), StandardError, SislabSync, SislabSync::InvalidMode
 
 ### Community 44 - "Fhir::ObservationsController"
 Cohesion: 0.28
 Nodes (3): Fhir, Fhir::ObservationsController, BaseController
 
 ### Community 45 - "Order"
-Cohesion: 0.18
+Cohesion: 0.16
 Nodes (4): Order, Order::AlreadyClaimed, StandardError, TrackingNumber
+
+### Community 46 - "Dictionary::LoincCoverage"
+Cohesion: 0.19
+Nodes (3): Dictionary, Dictionary::LoincCoverage, Dictionary::LoincCoverage::Row
 
 ### Community 47 - "app service (Puma)"
 Cohesion: 0.16
 Nodes (14): Dual-mode CI matrix, CI spec job, Swappable Transport, Database default connection (env-driven), READ-COMMITTED transaction isolation, TEST_DATABASE_NAME separation, app service (Puma), css service (Tailwind watcher) (+6 more)
 
 ### Community 48 - ".from_env"
-Cohesion: 0.12
-Nodes (5): ApplicationJob, Base, DictionaryPullJob, SyncPullJob, SyncPushJob
+Cohesion: 0.11
+Nodes (6): ApplicationJob, Base, DictionaryPullJob, SyncPullJob, Dictionary, Dictionary::Puller
 
 ### Community 49 - "Api::V3::Sync::EventsController"
-Cohesion: 0.12
-Nodes (9): Api, Api::V3, Api::V3::NodesController, BaseController, Api, Api::V3, Api::V3::Sync, Api::V3::Sync::EventsController (+1 more)
+Cohesion: 0.22
+Nodes (5): Api, Api::V3, Api::V3::Sync, Api::V3::Sync::EventsController, BaseController
 
 ### Community 50 - "Api::V3::Sync::InboundController"
-Cohesion: 0.21
+Cohesion: 0.19
 Nodes (5): Api, Api::V3, Api::V3::Sync, Api::V3::Sync::InboundController, BaseController
 
 ### Community 51 - "sync_outbox"
@@ -383,24 +398,24 @@ Cohesion: 0.29
 Nodes (6): call!(), entries_of(), Fhir, from_bundle(), InvalidRequest, StandardError
 
 ### Community 53 - "Patient"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (4): Fhir, Fhir::PatientsController, BaseController, Patient
 
 ### Community 54 - "Dictionary::Reference"
-Cohesion: 0.16
+Cohesion: 0.15
 Nodes (11): dictionary_term(), DictionaryTerms, by_code(), by_name(), by_uuid(), coerce(), Dictionary, Dictionary::Reference (+3 more)
 
 ### Community 58 - "SISLAB Sync v2 rebuild plan"
 Cohesion: 0.18
 Nodes (12): data/meta/errors response envelope, x-node-mode operation availability, draft → active promotion gate, Fixed decisions register, The national node never initiates a connection, SISLAB Sync v2 rebuild plan, Monotonic revision cursor, Risk register and mitigations (+4 more)
 
-### Community 59 - "NodeTransport"
-Cohesion: 0.33
-Nodes (3): NodeTransport, NodeTransport::TransportError, StandardError
+### Community 59 - ".authorize_scope!"
+Cohesion: 0.21
+Nodes (4): Api, Api::V3, Api::V3::OrdersController, BaseController
 
-### Community 61 - "Fhir::ServiceRequestsController"
-Cohesion: 0.36
-Nodes (3): Fhir, Fhir::ServiceRequestsController, BaseController
+### Community 61 - "OrderTest"
+Cohesion: 0.15
+Nodes (4): Fhir, Fhir::ServiceRequestsController, BaseController, OrderTest
 
 ### Community 63 - "SislabSyncClient::Feed"
 Cohesion: 0.27
@@ -415,16 +430,12 @@ Cohesion: 0.22
 Nodes (5): get_inbound(), push_from(), specimen_type(), test_type(), ApiKeyHelpers
 
 ### Community 68 - ".render_api_error"
-Cohesion: 0.09
-Nodes (10): Api, Api::V3, Api::V3::DictionaryController, BaseController, Api, Api::V3, Api::V3::Lab, Api::V3::Lab::ReferralsController (+2 more)
+Cohesion: 0.12
+Nodes (9): Api, Api::V3, Api::V3::DictionaryController, BaseController, Api, Api::V3, Api::V3::Lab, Api::V3::Lab::ReferralsController (+1 more)
 
-### Community 70 - "Api::BaseController"
-Cohesion: 0.22
-Nodes (4): Api, Api::BaseController, Api, Api::Authentication
-
-### Community 71 - "TestType"
-Cohesion: 0.20
-Nodes (4): TestType, build_dictionary!(), describe_test_type(), create_published()
+### Community 70 - "ApiClient"
+Cohesion: 0.17
+Nodes (3): ApiClientsController, ApiClient, find_client!()
 
 ### Community 73 - "MlabFixtureSource"
 Cohesion: 0.24
@@ -435,24 +446,32 @@ Cohesion: 0.20
 Nodes (3): feed(), BrokenInbound, RecordedInbound
 
 ### Community 75 - ".create"
-Cohesion: 0.14
-Nodes (10): parcel_from_elsewhere(), sample_in_progress(), event(), indicator(), lab_registered(), order_created(), specimen_type(), test_type() (+2 more)
+Cohesion: 0.20
+Nodes (8): parcel_from_elsewhere(), sample_in_progress(), event(), indicator(), lab_registered(), order_created(), specimen_type(), test_type()
 
 ### Community 76 - "sislab_sync_client reference gem"
 Cohesion: 0.22
 Nodes (9): CI lint job, RuboCop configuration (omakase + rspec), Relaxed RSpec cops, me as the first diagnostic call, Zero runtime dependencies by design, sislab_sync_client reference gem, bundler-audit ignore list, The twelve steps S1–S12 (+1 more)
 
+### Community 77 - "Fhir::SpecimenResource"
+Cohesion: 0.17
+Nodes (5): Fhir, Fhir::SpecimensController, BaseController, Fhir, Fhir::SpecimenResource
+
 ### Community 79 - ".token_value"
 Cohesion: 0.33
 Nodes (3): Fhir, Fhir::DiagnosticReportsController, BaseController
 
-### Community 82 - "Fhir::TransactionsController"
-Cohesion: 0.25
+### Community 82 - ".create"
+Cohesion: 0.22
 Nodes (3): Fhir, Fhir::TransactionsController, BaseController
 
-### Community 84 - ".for"
-Cohesion: 0.18
-Nodes (3): Sync, Sync::Heartbeat, stuck_event()
+### Community 84 - "OrderSerializer"
+Cohesion: 0.17
+Nodes (3): OrderSerializer, ReferralSerializer, StatusEventSerializer
+
+### Community 86 - "Sync::Push"
+Cohesion: 0.28
+Nodes (3): Sync, Sync::Push, push()
 
 ### Community 87 - "SislabSyncClient::Node"
 Cohesion: 0.29
@@ -494,6 +513,10 @@ Nodes (4): Api, Api::V3, Api::V3::HealthController, BaseController
 Cohesion: 0.33
 Nodes (4): Api, Api::V3, Api::V3::OrderRequestsController, BaseController
 
+### Community 98 - "DictionaryController"
+Cohesion: 0.17
+Nodes (3): DictionaryController, Dictionary, Dictionary::Associations
+
 ### Community 102 - "Lab client profile"
 Cohesion: 0.33
 Nodes (6): Lab client profile, Corrections via replaced_by_uuid, Tracking number format, Transactional core schema, Native statuses in FHIR extensions, SISLAB_SYNC_LAB_CODE
@@ -501,10 +524,6 @@ Nodes (6): Lab client profile, Corrections via replaced_by_uuid, Tracking number
 ### Community 104 - "Application Icon (Solid Red Circle, 512x512 PNG)"
 Cohesion: 0.60
 Nodes (6): Application Icon (Solid Red Circle, 512x512 PNG), Favicon and Apple Touch Icon Slot, Flat Geometry Scales Without Detail Loss, Placeholder Brand Mark, PWA Manifest Icon Slot, One Raster Asset Serves Every Icon Role
-
-### Community 105 - "Api"
-Cohesion: 0.50
-Nodes (3): Api, Api::V3, Api::V3::Lab
 
 ### Community 107 - "tracking_number.rb"
 Cohesion: 0.60
@@ -515,16 +534,28 @@ Cohesion: 0.50
 Nodes (5): dictionaryChanges operation, external_mappings table, dictionary:seed initial catalogue load, National dictionary and its synchronisation, mLab import (database and API paths)
 
 ### Community 115 - "Api::V3::ResultsController"
-Cohesion: 0.06
-Nodes (9): Api, Api::V3, Api::V3::ResultsController, BaseController, OrderSerializer, OrderTestSerializer, PatientSerializer, StatusEventSerializer (+1 more)
+Cohesion: 0.21
+Nodes (4): Api, Api::V3, Api::V3::ResultsController, BaseController
 
 ### Community 116 - "SislabSync"
 Cohesion: 0.50
 Nodes (3): Application, SislabSync, SislabSync::Application
 
+### Community 119 - "TestPanel"
+Cohesion: 0.20
+Nodes (5): OrganismDrug, TestPanel, build_dictionary!(), describe_test_type(), snapshot()
+
+### Community 122 - ".attribute_names_for"
+Cohesion: 0.25
+Nodes (3): Dictionary, Dictionary::Editable, Dictionary::Editable::Field
+
 ### Community 149 - "Application Icon (512x512 Red Circle)"
 Cohesion: 0.67
 Nodes (3): Application Icon (512x512 Red Circle), Placeholder Branding Asset, Static Public Asset Serving
+
+### Community 251 - "Api::V3::NodesController"
+Cohesion: 0.29
+Nodes (4): Api, Api::V3, Api::V3::NodesController, BaseController
 
 ### Community 255 - "order_requests_spec.rb"
 Cohesion: 0.83
@@ -543,7 +574,7 @@ Nodes (3): payload(), post_from_lab(), post_order()
 ## Knowledge Gaps
 - **27 isolated node(s):** `ApplicationHelper`, `application`, `Dictionary`, `SislabSyncClient`, `SislabSyncClient` (+22 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **79 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **85 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -556,9 +587,9 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `API error messages (en)` and `500 Internal Server Error static page`?**
   _Edge tagged AMBIGUOUS (relation: semantically_similar_to) - confidence is low._
-- **Why does `ApplicationRecord` connect `ApplicationRecord` to `InboundEvent`, `ApiKey`, `DictionaryEntriesController`, `Dictionary::MlabImporter`, `Dictionary::Applier`, `Referral`, `seeds.rb`, `Dictionary::QualityReport`, `DictionaryEntry`, `.api_client`, `OutboxEvent`, `Dictionary::LoincMapping`, `TestResult`, `Sequence`, `sislab_sync.rb`, `Order`, `Patient`, `StatusEvent`, `Session`, `TestType`, `OrderTest`, `Lab`, `User`?**
-  _High betweenness centrality (0.174) - this node is a cross-community bridge._
-- **Why does `Order` connect `Order` to `TracksStatus`, `InboundEvent`, `TestResult`, `.authorize_scope!`, `Sequence`, `AddedTests`, `Sync::Applier`, `ApplicationRecord`, `OrderTest`, `seeds.rb`, `DashboardController`, `.authorize_facility!`, `Patient`, `Dictionary::Reference`, `StatusEvent`, `OrderRequest`, `OrderSearch`, `NodeStatus`?**
-  _High betweenness centrality (0.087) - this node is a cross-community bridge._
-- **Why does `ApiKey` connect `ApiKey` to `ApplicationRecord`, `inbound_spec.rb`, `OrderTest`, `Api::BaseController`?**
-  _High betweenness centrality (0.052) - this node is a cross-community bridge._
+- **Why does `ApplicationRecord` connect `ApplicationRecord` to `InboundEvent`, `ApiKey`, `Facility`, `Indicator`, `RejectionReason`, `Dictionary::MlabImporter`, `Dictionary::Applier`, `Referral`, `seeds.rb`, `DictionaryEntry`, `.api_client`, `OutboxEvent`, `Dictionary::LoincMapping`, `TestResult`, `Sequence`, `Order`, `Patient`, `StatusEvent`, `OrderTest`, `Session`, `ApiClient`, `TestType`, `DictionaryLinksController`, `Dictionary::Promotion`, `Lab`, `User`, `TestPanel`, `AuditsController`?**
+  _High betweenness centrality (0.209) - this node is a cross-community bridge._
+- **Why does `ApplicationController` connect `ApplicationController` to `ApiKey`, `DictionaryController`, `ApiClient`, `DictionaryEntriesController`, `Referral`, `OutboxEvent`, `DictionaryLinksController`, `IndicatorRangesController`, `AuditsController`, `SessionsController`, `Authentication`, `OrderSearch`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+- **Why does `ApiKey` connect `ApiKey` to `inbound_spec.rb`, `ApplicationRecord`, `seeds.rb`, `.authorize_facility!`, `StatusEvent`?**
+  _High betweenness centrality (0.067) - this node is a cross-community bridge._

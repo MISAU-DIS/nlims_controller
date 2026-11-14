@@ -122,13 +122,24 @@ A chave não carrega laboratório nenhum. Uma instância do mLab fala por todos 
 | `app` | Servidor de aplicação HTTP Puma na porta `APP_PORT` (padrão: 3000). Executa a rotina de verificação e migração de base de dados na inicialização. |
 | `sidekiq` | Processador de tarefas assíncronas e agendadas em segundo plano (sincronização de outbox, pooling de dicionário e encaminhamentos). |
 | `css` | Compilador do Tailwind CSS em modo de monitorização contínua (*watch*). Utilizado em ambiente de desenvolvimento. |
-| `mysql` | Sistema de Gestão de Base de Dados Relacional MySQL 8.4 LTS. |
+| `mysql` | MySQL 8.4 LTS em contentor. **Opcional** (perfil `mysql`): por omissão a base de dados fica no MySQL do próprio servidor, fora dos contentores. |
 | `redis` | Servidor Redis 7 para gestão de filas do Sidekiq e armazenamento temporário de rate limiting. |
+
+A base de dados não vive em nenhum contentor. A aplicação liga-se ao MySQL do servidor pelo socket Unix (`/run/mysqld/mysqld.sock`, montado a partir de `MYSQL_SOCKET_DIR`), pelo que recriar o stack, ou apagar os volumes, não toca nos dados — e as cópias de segurança e as contas do MySQL do servidor cobrem-na como a qualquer outra base. A base é criada no primeiro arranque (`db:prepare`), por isso o utilizador indicado precisa de `CREATE` sobre ela:
+
+```sql
+CREATE USER 'sislab_sync'@'localhost' IDENTIFIED BY '...';
+GRANT ALL PRIVILEGES ON `sislab\_sync\_%`.* TO 'sislab_sync'@'localhost';
+```
+
+No Docker Desktop os contentores correm numa VM onde o socket do servidor não chega; aí a ligação é por TCP, com `DATABASE_HOST=host.docker.internal` e `DATABASE_SOCKET=` (vazio), e o utilizador tem de existir também como `'sislab_sync'@'127.0.0.1'`.
+
+Numa máquina sem MySQL próprio, o contentor continua disponível: `COMPOSE_PROFILES=mysql`, `DATABASE_HOST=mysql` e `DATABASE_SOCKET=` (vazio) no `.env`.
 
 Comandos operacionais frequentes:
 
 ```bash
-docker compose up -d mysql redis      # Inicialização exclusiva da infraestrutura de dados
+docker compose up -d redis            # Inicialização exclusiva da infraestrutura de dados
 docker compose logs -f app            # Acompanhamento contínuo de logs da aplicação
 docker compose exec app bin/rails c   # Acesso à consola interativa do Rails
 docker compose down                   # Encerramento dos contentores
@@ -171,8 +182,9 @@ A chave utilizada pelo nó local deve ser previamente emitida no nó nacional pa
 
 | Variável | Descrição |
 | --- | --- |
-| `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD` | Parâmetros de ligação TCP ao servidor MySQL. |
-| `DATABASE_SOCKET` | Socket Unix de um MySQL no anfitrião, com `DATABASE_HOST=localhost`. Vazio: ligação TCP. |
+| `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD` | Parâmetros de ligação ao servidor MySQL. No Docker Compose, `DATABASE_HOST` vale `localhost` por omissão, o que faz o cliente usar o socket. |
+| `DATABASE_SOCKET` | Socket Unix do MySQL; tem precedência sobre host e porta. No Docker Compose vale `/run/mysqld/mysqld.sock` por omissão; vazio para ligar por TCP. |
+| `MYSQL_SOCKET_DIR` | Directório do socket no servidor, montado em `/run/mysqld` (padrão: `/run/mysqld`; `/var/run/mysqld` em algumas distribuições). |
 | `DATABASE_NAME` | Nome da base de dados relacional da aplicação. |
 | `TEST_DATABASE_NAME` | Nome da base de dados dedicada à execução de testes automatizados (padrão: `sislab_sync_test`). |
 | `REDIS_URL` | URI de ligação ao servidor Redis. |
@@ -190,8 +202,6 @@ A chave utilizada pelo nó local deve ser previamente emitida no nó nacional pa
 | Variável | Descrição |
 | --- | --- |
 | `API_RATE_LIMIT_PER_MINUTE` | Limite de requisições por minuto por chave de API. |
-| `MLAB_DB_*` | Configurações de conexão para importação do legado mLab (exclusivo do nó nacional). |
-| `MLAB_API_URL`, `MLAB_API_TOKEN`, `MLAB_API_USER`, `MLAB_API_PASSWORD` | Endereço e credenciais da API do mLab, alternativa à ligação directa à base de dados na importação do catálogo. O token é opcional: na sua ausência a importação autentica-se em `/api/v1/auth/application_login`. |
 | `LOINC_CSV` | Caminho no sistema de ficheiros para o ficheiro `Loinc.csv` oficial utilizado na curadoria. |
 | `WEB_CONCURRENCY`, `RAILS_MAX_THREADS`, `SIDEKIQ_CONCURRENCY` | Parâmetros de paralelismo de processos e threads do servidor de aplicação e workers. |
 
@@ -273,9 +283,6 @@ A autoridade de escrita sobre o catálogo é restrita ao nó nacional:
 ```bash
 # Executado no Nó Nacional:
 bin/rails dictionary:seed                       # Carga inicial: catálogo distribuído com a release, já publicado
-bin/rails dictionary:snapshot                   # Recolha de um novo catálogo a partir do mLab (SOURCE=api|database)
-bin/rails dictionary:import_from_mlab           # Importação directa a partir da base legada mLab (estado draft)
-bin/rails dictionary:import_from_mlab_api       # Importação equivalente através da API do mLab (estado draft)
 bin/rails dictionary:quality                    # Geração de relatório de conformidade → tmp/dictionary_quality.csv
 ACTOR="Administrador" SKIP_BLOCKED=1 \
   bin/rails dictionary:promote                  # Publicação e ativação estruturada de rascunhos válidos
@@ -287,47 +294,40 @@ bin/rails dictionary:pull                       # Sincronização manual imediat
 
 #### Carga inicial do catálogo
 
-O ficheiro `db/dictionary/mlab_catalog.json` acompanha a release e contém o catálogo do mLab tal como
-estava no momento da recolha — departamentos, espécimes, fármacos, organismos, indicadores com os
-respectivos intervalos de referência, exames, painéis e todas as ligações entre eles. `dictionary:seed`
-importa-o, acrescenta os motivos de rejeição (o mLab não tem tabela para eles) e publica tudo,
-registando o acto contra `ACTOR`. É idempotente: a identidade vem do id do mLab através de
-`ExternalMapping`, pelo que uma segunda execução não duplica nem altera nada.
+O ficheiro `db/dictionary/catalogue.json` acompanha a release e contém o catálogo nacional curado —
+secções, espécimes, fármacos, organismos, indicadores com os respectivos intervalos de referência,
+exames, painéis, todas as ligações entre eles e os códigos LOINC. `dictionary:seed` carrega-o,
+acrescenta os motivos de rejeição e publica tudo, registando o acto contra `ACTOR`. É idempotente: a
+identidade vem da chave de cada linha no catálogo através de `ExternalMapping`, pelo que uma segunda
+execução não duplica nem altera nada.
 
-Esta é a carga **inicial**. A partir daí o catálogo é propriedade do nó nacional e os exames novos são
-criados à mão na interface; `dictionary:snapshot` só volta a ser necessário para distribuir um catálogo
-mais recente do mLab numa nova release.
+Esta é a carga **inicial**. A partir daí o dicionário é propriedade do nó nacional e é gerido na
+interface: nenhum sistema de laboratório o alimenta, e os laboratórios recebem-no pelo feed. Voltar a
+correr `dictionary:seed` com um catálogo mais recente repõe os campos que o catálogo traz, pelo que não
+se destina a um nó cujo dicionário já foi alterado à mão.
 
-| Entidade | Entradas na recolha de 2026-08-30 |
+| Entidade | Entradas no catálogo |
 | --- | --- |
-| Departamentos | 13 |
-| Tipos de espécime | 28 |
-| Fármacos | 30 |
-| Organismos | 224 |
-| Indicadores | 527 (3 recusados por não terem nome) |
-| Intervalos de referência | 1061 |
-| Exames | 115 |
-| Painéis | 9 |
-| Motivos de rejeição | 10 (deste repositório, não do mLab) |
+| Secções | 10 |
+| Tipos de espécime | 26 |
+| Fármacos | 29 |
+| Organismos | 221 |
+| Indicadores | 247 |
+| Intervalos de referência | 375 |
+| Exames | 114 |
+| Painéis | 7 |
+| Motivos de rejeição | 10 |
 
-O relatório de qualidade é gerado no fim da carga e não a bloqueia: a recolha de 2026-08-30 acusa 279
-nomes duplicados e 199 indicadores sem exame associado, herdados do mLab. `SKIP_BLOCKED=1` retém os
-exames sem indicadores ou sem espécime em rascunho, para serem corrigidos antes de chegarem aos
-laboratórios.
+O catálogo só traz o que um laboratório consegue usar: todos os exames têm indicadores e espécime,
+todos os indicadores pertencem a um exame, a mesma medição existe uma só vez e é partilhada pelos
+exames que a reportam, e as unidades e os tempos de resposta estão escritos de uma
+só maneira. Os códigos LOINC foram conferidos com a release 2.83 e cobrem os fármacos (susceptibilidade),
+203 dos 247 indicadores e 85 dos 114 exames; os restantes ficaram sem código porque o código certo
+depende de uma unidade, de um espécime ou de um método que a entrada não fixa, e são curados no nó
+nacional (secção 6.6).
 
-#### Reimportação directa do mLab
-
-As duas importações são intercambiáveis — partilham o mesmo importador, a mesma identidade por
-`ExternalMapping` e a mesma idempotência — e diferem apenas na origem das linhas. A via API é a
-indicada quando apenas o HTTP do mLab está acessível, com três limitações que decorrem da própria
-API e que a tarefa comunica no final da execução:
-
-- Exames e painéis pediátricos ou oncológicos são omitidos pelas listagens da API; uma importação
-  por esta via retira os que uma importação anterior pela base de dados tenha criado.
-- Um indicador chega através do exame que o utiliza, pelo que indicadores sem exame associado não
-  são importados.
-- Um exame cujo departamento esteja retirado no mLab não pode ser lido em detalhe (a API responde
-  404), pelo que é importado sem indicadores nem organismos e é nomeado nos avisos da fonte.
+O relatório de qualidade é gerado no fim da carga e não a bloqueia. `SKIP_BLOCKED=1` retém em rascunho
+os exames sem indicadores ou sem espécime, para serem corrigidos antes de chegarem aos laboratórios.
 
 ### 6.6. Curadoria de Mapeamentos LOINC
 

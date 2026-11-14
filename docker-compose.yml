@@ -6,6 +6,22 @@
 #
 # Running a local and a national node side by side (needed from S9 onwards) is
 # done by giving each its own directory and COMPOSE_PROJECT_NAME.
+#
+# The database lives outside the containers, in the server's own MySQL, reached
+# through its Unix socket (MYSQL_SOCKET_DIR, /run/mysqld by default): removing
+# or rebuilding the stack never touches the data, and the server's backups and
+# accounts cover it like any other database there. A machine with no MySQL of
+# its own can run one in a container instead:
+#
+#   COMPOSE_PROFILES=mysql
+#   DATABASE_HOST=mysql
+#   DATABASE_SOCKET=
+#
+# Docker Desktop runs containers inside a VM, and a Unix socket does not cross
+# into it. There the server's MySQL is reached over TCP instead:
+#
+#   DATABASE_HOST=host.docker.internal
+#   DATABASE_SOCKET=
 
 name: ${COMPOSE_PROJECT_NAME:-sislab_sync}
 
@@ -15,16 +31,23 @@ x-app: &app
     target: development
   env_file: .env
   environment:
-    DATABASE_HOST: mysql
+    # localhost is what makes the MySQL client use the socket rather than TCP.
+    DATABASE_HOST: ${DATABASE_HOST:-localhost}
+    DATABASE_SOCKET: ${DATABASE_SOCKET-/run/mysqld/mysqld.sock}
     REDIS_URL: redis://redis:6379/0
+  # Docker Desktop defines this name itself; Docker Engine needs to be told.
+  extra_hosts:
+    - host.docker.internal:host-gateway
   # Only the code is mounted. Gems stay in the image: a named volume for them
   # keeps whatever was installed the first time, so adding a gem to the Gemfile
   # would fail at boot with the rebuild looking successful.
   volumes:
     - .:/rails
+    - ${MYSQL_SOCKET_DIR:-/run/mysqld}:/run/mysqld
   depends_on:
     mysql:
       condition: service_healthy
+      required: false
     redis:
       condition: service_healthy
 
@@ -52,8 +75,10 @@ services:
     <<: *app
     command: bundle exec rails tailwindcss:watch[always]
 
+  # Only with COMPOSE_PROFILES=mysql — see the top of this file.
   mysql:
     image: mysql:8.4
+    profiles: [mysql]
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD:-sislab}
       MYSQL_DATABASE: ${DATABASE_NAME:-sislab_sync_development}

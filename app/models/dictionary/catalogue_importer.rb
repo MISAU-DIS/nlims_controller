@@ -1,22 +1,25 @@
 # frozen_string_literal: true
 
 module Dictionary
-  # Loads the dictionary from a SISLAB/mLab database into the national one.
+  # Loads a catalogue into the national dictionary.
   #
-  # Re-runnable. Identity comes from ExternalMapping: the mLab id is kept as the
-  # external code, so a second run finds what the first run created and updates
-  # it instead of making a second copy. An entry whose mLab row has since been
-  # retired is retired here too, rather than left behind as a national fact that
-  # no longer exists anywhere.
+  # Re-runnable. Identity comes from ExternalMapping: each row's key in the
+  # catalogue is kept as the external code, so a second run finds what the
+  # first run created and updates it instead of making a second copy. An entry
+  # a newer catalogue no longer carries is retired, rather than left behind as
+  # a national fact that nobody maintains.
   #
   # Everything arrives as a draft. Nothing reaches a local node until somebody
   # promotes it — see Dictionary::Promotion.
-  class MlabImporter
+  class CatalogueImporter
+    # The catalogue's row keys are the ids the rows had in mLab, so the mapping
+    # is filed under that system: it is also how a laboratory's mLab codes are
+    # translated to national ones.
     SYSTEM = "mlab"
-    ACTOR = "importação mlab"
+    ACTOR = "catálogo nacional"
 
-    # mLab writes the words out; we store the single letters the rest of the
-    # system uses.
+    # The catalogue writes the words out; we store the single letters the rest
+    # of the system uses.
     SEXES = { "Both" => "Both", "Male" => "M", "Female" => "F" }.freeze
 
     attr_reader :entities, :links, :retired, :skipped
@@ -79,7 +82,9 @@ module Dictionary
 
     def import_drugs
       @source.drugs.each do |row|
-        upsert(Drug, "drugs", row, name: clean(row[:name]), short_name: clean(row[:short_name]))
+        upsert(Drug, "drugs", row,
+               name: clean(row[:name]), short_name: clean(row[:short_name]),
+               loinc_code: clean(row[:loinc_code]))
       end
     end
 
@@ -105,7 +110,8 @@ module Dictionary
                name: clean(row[:name]),
                unit: clean(row[:unit]),
                description: clean(row[:description]),
-               value_type: row[:value_type])
+               value_type: row[:value_type],
+               loinc_code: clean(row[:loinc_code]))
       end
 
       import_indicator_ranges
@@ -135,7 +141,7 @@ module Dictionary
       }
     end
 
-    # Ranges have no identity of their own in mLab worth preserving, so the set
+    # Ranges have no identity of their own worth preserving, so the set
     # is compared as a whole and only rewritten when it actually differs. That
     # keeps a re-run from bumping every indicator's revision.
     def replace_ranges(indicator_id, desired)
@@ -151,8 +157,9 @@ module Dictionary
     end
 
     # A comparable, engine-independent shape for one range. Decimals are pinned
-    # to four places because mLab's column precision differs from ours, and
-    # comparing the raw values would rewrite every range on every run.
+    # to four places because the catalogue and the column do not write them the
+    # same way, and comparing the raw values would rewrite every range on every
+    # run.
     def range_key(attributes)
       [
         attributes[:age_min].to_s,
@@ -192,7 +199,8 @@ module Dictionary
                short_name: clean(row[:short_name]),
                department_id: department_id,
                target_tat: clean(row[:target_tat]),
-               performed_on_sex: SEXES.fetch(row[:sex].to_s, "Both"))
+               performed_on_sex: SEXES.fetch(row[:sex].to_s, "Both"),
+               loinc_code: clean(row[:loinc_code]))
       end
 
       reconcile_links(
@@ -274,8 +282,9 @@ module Dictionary
       uuid && model.find_by(uuid: uuid)
     end
 
-    # Translates a list of mLab id pairs into our own ids. Owners with no links
-    # are included with an empty list, so a link removed upstream is removed here.
+    # Translates a list of catalogue key pairs into our own ids. Owners with no
+    # links are included with an empty list, so a link the catalogue dropped is
+    # removed here.
     def desired_links(rows, owner_entity, owner_key, target_entity, target_key)
       desired = @seen[owner_entity].each_with_object({}) do |external_code, hash|
         id = @id_of[[ owner_entity, external_code ]]
@@ -311,8 +320,8 @@ module Dictionary
       end
     end
 
-    # An entry mapped from mLab whose row is gone or retired upstream. It cannot
-    # simply be deleted: a local node may already hold it, and only a retirement
+    # An entry an earlier catalogue created and this one no longer carries. It
+    # cannot simply be deleted: a local node may already hold it, and only a retirement
     # travels down the delta.
     def retire_entries_absent_from_source
       Dictionary::ENTITIES.each_key do |entity_type|
@@ -324,7 +333,7 @@ module Dictionary
           entry = model.find_by(uuid: mapping.entity_uuid)
           next if entry.nil? || entry.retired?
 
-          entry.retire!(actor: ACTOR, reason: "já não existe na fonte mLab")
+          entry.retire!(actor: ACTOR, reason: "já não existe no catálogo")
           @retired[entity_type] += 1
         end
       end

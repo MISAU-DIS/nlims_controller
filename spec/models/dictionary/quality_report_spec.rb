@@ -3,10 +3,10 @@
 require "rails_helper"
 
 RSpec.describe Dictionary::QualityReport do
-  # The fixture carries the same defects the real mLab database has, so the
+  # The fixture carries the defects a catalogue can have, so the
   # report is checked against them rather than against invented data.
   context "with the sample dictionary imported" do
-    before { Dictionary::MlabImporter.new(source: MlabFixtureSource.load).call }
+    before { Dictionary::CatalogueImporter.new(source: CatalogueFixture.load).call }
 
     let(:report) { described_class.new }
 

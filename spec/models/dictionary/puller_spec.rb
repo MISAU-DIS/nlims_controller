@@ -12,7 +12,7 @@ RSpec.describe Dictionary::Puller do
   end
 
   let!(:entries) do
-    Dictionary::MlabImporter.new(source: MlabFixtureSource.load).call
+    Dictionary::CatalogueImporter.new(source: CatalogueFixture.load).call
     Dictionary::Promotion.new(actor: "spec").call
     payload = Dictionary.delta(0)[:entries]
     wipe_dictionary!

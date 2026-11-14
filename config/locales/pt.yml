@@ -338,6 +338,18 @@ pt:
       test_types: Testes
       test_panels: Painéis
       rejection_reasons: Motivos de rejeição
+    # Singular, for a sentence that names one: "Criar indicador novo".
+    entity:
+      facilities: unidade sanitária
+      labs: laboratório
+      departments: secção
+      specimen_types: tipo de amostra
+      drugs: antibiótico
+      organisms: organismo
+      indicators: indicador
+      test_types: teste
+      test_panels: painel
+      rejection_reasons: motivo de rejeição
     statuses:
       draft: Rascunho
       active: Activo
@@ -369,6 +381,69 @@ pt:
         do país, e nenhuma interface FHIR ou HL7 o consegue traduzir.
       moh_code: Código interno do MISAU, se existir. Não substitui o LOINC.
       short_name: O que aparece num boletim estreito ou numa etiqueta.
+    associations:
+      none: Nada associado ainda.
+      add: Associar
+      add_label: Associar %{entity}
+      add_placeholder: Escreva o nome ou o código e escolha da lista…
+      remove: Remover
+      create_new: Não existe? Criar %{entity} novo e associar
+      create: Criar e associar
+      create_hint: Nasce como rascunho — active-o para chegar aos laboratórios.
+      test_types:
+        indicators:
+          title: Indicadores
+          hint: O que este teste reporta. Sem indicadores, o teste não tem onde registar um resultado.
+        specimen_types:
+          title: Tipos de amostra
+          hint: As amostras em que pode ser feito. Sem nenhuma, o teste não se consegue colher.
+        organisms:
+          title: Organismos
+          hint: Só para culturas — os organismos que o teste pode isolar.
+        test_panels:
+          title: Painéis
+          hint: Os painéis em que este teste é pedido em conjunto com outros.
+      test_panels:
+        test_types:
+          title: Testes do painel
+          hint: Pedidos todos de uma vez quando o painel é pedido.
+      indicators:
+        test_types:
+          title: Testes
+          hint: Os testes que reportam este indicador. Um indicador sem teste nunca chega a ser registado.
+      specimen_types:
+        test_types:
+          title: Testes
+          hint: Os testes que aceitam este tipo de amostra.
+      organisms:
+        drugs:
+          title: Antibióticos
+          hint: Os antibióticos contra os quais este organismo é testado no antibiograma.
+        test_types:
+          title: Testes
+          hint: As culturas que podem isolar este organismo.
+      drugs:
+        organisms:
+          title: Organismos
+          hint: Os organismos testados contra este antibiótico.
+    ranges:
+      title: Intervalos de referência
+      hint: >-
+        Contra o que um resultado é interpretado, por sexo e idade. Indique
+        limites para um valor numérico, ou o valor esperado para um qualitativo.
+      add: Adicionar
+      columns:
+        sex: Sexo
+        age_min: Idade mín.
+        age_max: Idade máx.
+        range_lower: Limite inferior
+        range_upper: Limite superior
+        value: Valor esperado
+        interpretation: Interpretação
+      sexes:
+        Both: Ambos
+        M: Masculino
+        F: Feminino
     issues:
       duplicate_name: entradas com o nome repetido
       test_type_without_indicators: testes sem indicadores — não reportam nada
@@ -417,8 +492,15 @@ pt:
       any_status: Qualquer estado
       apply: Filtrar
       none: Nenhuma entrada corresponde a este filtro.
+      links: Associações
 
   dictionary_entries:
+    edit:
+      sections: Secções desta entrada
+      published_lede: >-
+        Publicada: cada alteração — incluindo associar ou remover um indicador,
+        uma amostra ou um intervalo — chega aos laboratórios na próxima
+        sincronização.
     new:
       title: Nova entrada
       lede: >-
@@ -434,6 +516,26 @@ pt:
       retired: "%{code} retirado."
     promote:
       promoted: "%{promoted} entradas activadas, %{held_back} retidas por não estarem utilizáveis."
+
+  dictionary_links:
+    create:
+      linked: "%{name} associado."
+      not_found: >-
+        Nada na lista corresponde a «%{term}». Escolha uma das sugestões, ou
+        crie uma entrada nova.
+      ambiguous: "«%{term}» corresponde a várias entradas — escolha uma da lista: %{names}"
+    destroy:
+      unlinked: "%{name} removido."
+    create_entry:
+      created: "%{code} — %{name} criado como rascunho e associado."
+
+  indicator_ranges:
+    create:
+      created: Intervalo adicionado.
+    update:
+      updated: Intervalo actualizado.
+    destroy:
+      destroyed: Intervalo removido.
 
   sync_queue:
     index:

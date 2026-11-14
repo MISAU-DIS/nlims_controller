@@ -1,0 +1,78 @@
+<%# One form per row. A form cannot wrap a table row, so the forms sit empty
+    above the table and each input names its own with the `form` attribute. %>
+<% cell_input = "rounded border border-slate-300 px-2 py-1 text-xs shadow-sm
+                 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+<% sexes = IndicatorRange::SEXES.map { |sex| [t("dictionary.ranges.sexes.#{sex}"), sex] } %>
+<% rows = ranges.map { |range| [range, "range-#{range.id}"] } + [[IndicatorRange.new(indicator: indicator), "range-new"]] %>
+
+<section id="ranges" class="scroll-mt-6">
+  <%= panel t("dictionary.ranges.title"), subtitle: t("dictionary.ranges.hint") do %>
+    <% rows.each do |range, form_id| %>
+      <%= form_with model: range, scope: :range,
+            url: range.persisted? ? indicator_range_path(indicator.national_code, range) : indicator_ranges_path(indicator.national_code),
+            method: range.persisted? ? :patch : :post,
+            id: form_id, html: { hidden: true } do %>
+      <% end %>
+    <% end %>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.sex") %></th>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.age_min") %></th>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.age_max") %></th>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.range_lower") %></th>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.range_upper") %></th>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.value") %></th>
+            <th class="px-3 py-2"><%= t("dictionary.ranges.columns.interpretation") %></th>
+            <th class="px-3 py-2"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% rows.each do |range, form_id| %>
+            <tr class="<%= "bg-slate-50" unless range.persisted? %>">
+              <td class="px-3 py-1.5">
+                <%= select_tag "range[sex]", options_for_select(sexes, range.sex), form: form_id, class: "#{cell_input} w-28",
+                      "aria-label": t("dictionary.ranges.columns.sex") %>
+              </td>
+              <% %i[age_min age_max range_lower range_upper].each do |field| %>
+                <td class="px-3 py-1.5">
+                  <%= number_field_tag "range[#{field}]", plain_number(range.public_send(field)),
+                        form: form_id, step: "any", class: "#{cell_input} #{field.to_s.start_with?("age") ? "w-16" : "w-20"} tabular",
+                        "aria-label": t("dictionary.ranges.columns.#{field}") %>
+                </td>
+              <% end %>
+              <td class="px-3 py-1.5">
+                <%= text_field_tag "range[value]", range.value, form: form_id, class: "#{cell_input} w-28",
+                      "aria-label": t("dictionary.ranges.columns.value") %>
+              </td>
+              <td class="px-3 py-1.5">
+                <%= text_field_tag "range[interpretation]", range.interpretation, form: form_id, class: "#{cell_input} w-32",
+                      "aria-label": t("dictionary.ranges.columns.interpretation") %>
+              </td>
+              <td class="whitespace-nowrap px-3 py-1.5 text-right">
+                <% if range.persisted? %>
+                  <div class="flex justify-end gap-1">
+                    <button type="submit" form="<%= form_id %>"
+                            class="cursor-pointer rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                      <%= t("save") %>
+                    </button>
+                    <%= button_to t("dictionary.associations.remove"), indicator_range_path(indicator.national_code, range),
+                          method: :delete,
+                          class: "rounded-md px-2 py-1 text-xs font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-700" %>
+                  </div>
+                <% else %>
+                  <button type="submit" form="<%= form_id %>"
+                          class="cursor-pointer rounded-md bg-slate-900 px-2 py-1 text-xs font-medium text-white hover:bg-slate-800">
+                    <%= t("dictionary.ranges.add") %>
+                  </button>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</section>

@@ -66,6 +66,10 @@ class Sequence < ApplicationRecord
     return if value.to_i <= current(name)
 
     transaction do
+      # A node installed from the schema has no counter rows at all, and the
+      # first thing a new local node does is pull the dictionary.
+      ensure_row(name)
+
       row = lock.find_by!(name: name)
       row.update_column(:value, value) if row.value < value.to_i
     end

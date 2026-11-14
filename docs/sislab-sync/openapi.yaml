@@ -2182,7 +2182,12 @@ components:
 
     DictionaryEntry:
       type: object
-      description: Estrutura de dados de uma entrada do catálogo mestre nacional.
+      description: >
+        Estrutura de dados de uma entrada do catálogo mestre nacional. O catálogo
+        é escrito apenas no nó nacional; um nó local serve a réplica que recebeu.
+        Um indicador existe uma só vez e é partilhado pelos testes que o
+        reportam, pelo que o mesmo `national_code` pode aparecer em `indicators`
+        de mais de um teste.
       required:
         [entity, revision, uuid, national_code, status, name, short_name,
          description, loinc_code, moh_code, deleted_at]
@@ -2203,11 +2208,30 @@ components:
         name: { type: string }
         short_name: { type: [string, "null"] }
         description: { type: [string, "null"] }
-        loinc_code: { type: [string, "null"] }
+        loinc_code:
+          type: [string, "null"]
+          pattern: '^\d{1,7}-\d$'
+          description: >
+            Código LOINC da entrada, com dígito de controlo válido. Atribuído em
+            `test_types` (o que se pede), `indicators` (o que se mede) e `drugs`
+            (a susceptibilidade ao antibiótico); o LOINC não codifica organismos
+            nem tipos de amostra. Nulo enquanto a entrada não tiver sido curada
+            no nó nacional. O corpo do código não está limitado a cinco dígitos:
+            as edições recentes do LOINC já emitem códigos acima de 100000.
         moh_code: { type: [string, "null"] }
         deleted_at: { type: [string, "null"], format: date-time }
-        unit: { type: [string, "null"] }
-        value_type: { type: [string, "null"] }
+        unit:
+          type: [string, "null"]
+          description: >
+            Unidade em que o indicador é reportado (`indicators`), escrita de uma
+            só maneira em todo o catálogo — por exemplo `mg/dL`, `mmol/L`, `U/L`,
+            `10^3/uL`, `s`. Nula num indicador qualitativo ou sem unidade.
+        value_type:
+          type: [string, "null"]
+          enum: [AutoComplete, Free Text, Numeric, AlphaNumeric, Rich Text, null]
+          description: >
+            Forma do resultado de um indicador (`indicators`). Um indicador
+            `AutoComplete` traz em `ranges` os valores que aceita.
         ranges:
           type: array
           description: Intervalos de referência fisiológicos para indicadores numéricos.
@@ -2244,7 +2268,9 @@ components:
         phone: { type: [string, "null"] }
         target_tat:
           type: [string, "null"]
-          description: Tempo de resposta esperado (Turnaround Time).
+          description: >
+            Tempo de resposta esperado (Turnaround Time), como número e unidade:
+            `min`, `h`, `d` ou `sem` — por exemplo `30 min`, `2 h`, `7 d`.
         performed_on_sex: { type: [string, "null"] }
         specimen_types: { $ref: "#/components/schemas/DictionaryLinks" }
         indicators: { $ref: "#/components/schemas/DictionaryLinks" }

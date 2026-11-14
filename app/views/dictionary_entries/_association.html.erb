@@ -1,0 +1,77 @@
+<% labels = "dictionary.associations.#{entity_type}.#{association.name}" %>
+<% picker_id = "candidates-#{association.name}" %>
+<% input_class = "w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm shadow-sm
+                  focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+
+<section id="links-<%= association.name %>" class="scroll-mt-6">
+  <%= panel t("#{labels}.title"), subtitle: t("#{labels}.hint", default: "").presence do %>
+    <% if linked.empty? %>
+      <p class="px-5 py-6 text-sm text-slate-500"><%= t("dictionary.associations.none") %></p>
+    <% else %>
+      <ul class="divide-y divide-slate-100">
+        <% linked.each do |target| %>
+          <li class="flex items-center gap-3 px-5 py-2 text-sm">
+            <span class="w-28 shrink-0 font-mono text-xs text-slate-500"><%= target.national_code %></span>
+            <%= link_to target.name, edit_dictionary_entry_path(association.other_entity, target.national_code),
+                  class: "min-w-0 flex-1 truncate text-slate-900 hover:underline" %>
+            <% unless target.active? %>
+              <%= status_badge target.status, scope: "dictionary.statuses" %>
+            <% end %>
+            <%= button_to t("dictionary.associations.remove"),
+                  dictionary_link_path(entity_type, entry.national_code, association.name, target.national_code),
+                  method: :delete,
+                  class: "rounded-md px-2 py-1 text-xs font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-700" %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <div class="space-y-3 border-t border-slate-200 bg-slate-50 px-5 py-4">
+      <%= form_with url: dictionary_links_path(entity_type, entry.national_code, association.name),
+            class: "flex gap-2" do |form| %>
+        <%= form.label :target, t("dictionary.associations.add_label", entity: t("dictionary.entities.#{association.other_entity}")),
+              class: "sr-only", for: "#{picker_id}-input" %>
+        <%= form.text_field :target, list: picker_id, id: "#{picker_id}-input", required: true, autocomplete: "off",
+              placeholder: t("dictionary.associations.add_placeholder"), class: input_class %>
+        <datalist id="<%= picker_id %>">
+          <% association.candidates(entry).pluck(:national_code, :name).each do |code, name| %>
+            <option value="<%= code %> — <%= name %>"></option>
+          <% end %>
+        </datalist>
+        <%= form.submit t("dictionary.associations.add"),
+              class: "shrink-0 cursor-pointer rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800" %>
+      <% end %>
+
+      <details class="group">
+        <summary class="cursor-pointer text-xs font-medium text-slate-600 hover:text-slate-900">
+          <%= t("dictionary.associations.create_new", entity: t("dictionary.entity.#{association.other_entity}")) %>
+        </summary>
+
+        <%= form_with url: new_dictionary_link_entry_path(entity_type, entry.national_code, association.name),
+              scope: :entry, class: "mt-3 grid gap-2 sm:grid-cols-6" do |form| %>
+          <div class="sm:col-span-6">
+            <%= form.label :name, t("dictionary.fields.name"), class: "block text-xs font-medium text-slate-600" %>
+            <%= form.text_field :name, required: true, class: "mt-1 #{input_class}" %>
+          </div>
+
+          <% if association.other_entity == "indicators" %>
+            <div class="sm:col-span-2">
+              <%= form.label :unit, t("dictionary.fields.unit"), class: "block text-xs font-medium text-slate-600" %>
+              <%= form.text_field :unit, class: "mt-1 #{input_class}" %>
+            </div>
+            <div class="sm:col-span-4">
+              <%= form.label :value_type, t("dictionary.fields.value_type"), class: "block text-xs font-medium text-slate-600" %>
+              <%= form.select :value_type, Indicator::VALUE_TYPES, { selected: "Numeric" }, class: "mt-1 #{input_class}" %>
+            </div>
+          <% end %>
+
+          <div class="flex items-center gap-3 sm:col-span-6">
+            <%= form.submit t("dictionary.associations.create"),
+                  class: "cursor-pointer rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100" %>
+            <span class="text-xs text-slate-500"><%= t("dictionary.associations.create_hint") %></span>
+          </div>
+        <% end %>
+      </details>
+    </div>
+  <% end %>
+</section>

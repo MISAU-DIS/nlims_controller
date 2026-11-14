@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Dictionary::Seed do
   def seed(**options)
-    described_class.new(source: MlabFixtureSource.load, actor: "spec", **options).call
+    described_class.new(source: CatalogueFixture.load, actor: "spec", **options).call
   end
 
   describe "standing a national node up" do
@@ -15,7 +15,7 @@ RSpec.describe Dictionary::Seed do
       expect(Dictionary.models.sum { |model| model.drafts.count }).to eq(0)
     end
 
-    it "adds the rejection reasons mLab keeps no table of" do
+    it "adds the starting set of rejection reasons" do
       seed
 
       expect(RejectionReason.active.pluck(:name)).to match_array(described_class::REJECTION_REASONS)
@@ -54,9 +54,9 @@ RSpec.describe Dictionary::Seed do
   end
 
   describe "the catalogue shipped with the release" do
-    it "stands a node up with the whole of mLab published" do
+    it "stands a node up with the whole of it published" do
       result = described_class.new(actor: "spec").call
-      catalogue = Dictionary::SnapshotSource.load
+      catalogue = Dictionary::Catalogue.load
 
       expect(TestType.active.count).to eq(catalogue.test_types.length)
       expect(TestPanel.active.count).to eq(catalogue.test_panels.length)
