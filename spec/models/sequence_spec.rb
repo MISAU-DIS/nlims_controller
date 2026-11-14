@@ -42,4 +42,23 @@ RSpec.describe Sequence do
       expect(described_class.current("national_code:QQ")).to eq(0)
     end
   end
+
+  describe ".ensure_at_least!" do
+    # A node installed from the schema has none of the rows the migration
+    # inserted, and the first dictionary pull lands here.
+    it "creates the counter on a node that has never had one" do
+      described_class.where(name: "national_code:NV").delete_all
+
+      described_class.ensure_at_least!("national_code:NV", 42)
+
+      expect(described_class.current("national_code:NV")).to eq(42)
+    end
+
+    it "never moves a counter backwards" do
+      described_class.ensure_at_least!("national_code:NV", 42)
+      described_class.ensure_at_least!("national_code:NV", 7)
+
+      expect(described_class.current("national_code:NV")).to eq(42)
+    end
+  end
 end
