@@ -19,7 +19,7 @@ RSpec.describe Dictionary::Applier do
   end
 
   def build_dictionary!
-    Dictionary::MlabImporter.new(source: MlabFixtureSource.load).call
+    Dictionary::CatalogueImporter.new(source: CatalogueFixture.load).call
     Dictionary::Promotion.new(actor: "spec").call
   end
 

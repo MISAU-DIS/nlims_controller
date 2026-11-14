@@ -3,20 +3,20 @@
 module Dictionary
   # The dictionary a national node starts life with.
   #
-  # It loads the catalogue shipped with the release — mLab's, as it stood when
-  # the snapshot was taken — and publishes it, because a dictionary nobody
-  # promoted reaches no laboratory. From then on the catalogue is edited on the
-  # national node by hand; this runs once at installation, and again only when a
-  # newer snapshot is shipped.
+  # It loads the catalogue shipped with the release and publishes it, because a
+  # dictionary nobody promoted reaches no laboratory. From then on the
+  # dictionary is edited on the national node by hand; this runs once at
+  # installation, and again only when a release ships a newer catalogue — which
+  # then overwrites the fields it carries, so it is not for a node whose
+  # dictionary has moved on by hand.
   #
-  # Re-runnable, like the import it wraps: entries are matched by their mLab id,
-  # so a second run changes nothing it did the first time.
+  # Re-runnable, like the import it wraps: entries are matched by their key in
+  # the catalogue, so a second run changes nothing it did the first time.
   class Seed
-    ACTOR = "catálogo inicial mLab"
+    ACTOR = "catálogo inicial"
 
-    # mLab keeps no table of these, and a laboratory that cannot say why it
-    # refused a sample writes the reason in a note nobody can count. So the
-    # release ships a starting set. They are ordinary dictionary entries from
+    # A laboratory that cannot say why it refused a sample writes the reason in
+    # a note nobody can count, so the release ships a starting set. They are ordinary dictionary entries from
     # the moment they exist: add to them, rename or retire them like any other.
     REJECTION_REASONS = [
       "Amostra hemolisada",
@@ -34,14 +34,14 @@ module Dictionary
     attr_reader :source, :importer, :promotion, :reasons_created
 
     def initialize(source: nil, actor: ACTOR, skip_blocked: false)
-      @source = source || SnapshotSource.load
+      @source = source || Catalogue.load
       @actor = actor
       @skip_blocked = skip_blocked
       @reasons_created = 0
     end
 
     def call
-      @importer = MlabImporter.new(source: @source).call
+      @importer = CatalogueImporter.new(source: @source).call
       @reasons_created = add_rejection_reasons
       @promotion = Promotion.new(actor: @actor, skip_blocked: @skip_blocked).call
 

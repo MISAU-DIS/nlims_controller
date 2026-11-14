@@ -184,7 +184,7 @@ module Seeds
     # both are exactly what the quality report holds a promotion back for.
     def dictionary
       return say("  dicionário já tem entradas") if TestType.exists?
-      return national_catalogue if SislabSync.national? && Dictionary::SnapshotSource.available?
+      return national_catalogue if SislabSync.national? && Dictionary::Catalogue.available?
 
       bioquimica = Department.create!(name: "Bioquímica", status: DictionaryEntry::ACTIVE)
       hematologia = Department.create!(name: "Hematologia", status: DictionaryEntry::ACTIVE)
@@ -232,7 +232,7 @@ module Seeds
       # something to promote.
       TestType.create!(name: "Urocultura", department: Department.active.first, status: DictionaryEntry::DRAFT)
 
-      say "  dicionário: #{seed.published} entradas do catálogo mLab publicadas, 1 rascunho"
+      say "  dicionário: #{seed.published} entradas do catálogo publicadas, 1 rascunho"
     end
 
     def specimen(name)

@@ -3,10 +3,7 @@
 # Loading and publishing the national dictionary. Only the national node owns
 # it, so these refuse to run anywhere else.
 #
-#   bin/rails dictionary:snapshot               # mLab -> db/dictionary/mlab_catalog.json
-#   bin/rails dictionary:seed                   # that file -> a new national node
-#   bin/rails dictionary:import_from_mlab       # from the mLab database
-#   bin/rails dictionary:import_from_mlab_api   # from the mLab API
+#   bin/rails dictionary:seed                   # the shipped catalogue -> a new national node
 #   bin/rails dictionary:quality
 #   ACTOR="Kelven" SKIP_BLOCKED=1 bin/rails dictionary:promote
 #   bin/rails dictionary:status
@@ -18,39 +15,10 @@ namespace :dictionary do
     abort "The dictionary is owned by the national node; this node is running in #{SislabSync.mode} mode."
   end
 
-  desc "Import the dictionary from the SISLAB/mLab database (everything arrives as a draft)"
-  task import_from_mlab: :national_only do
-    import_the_dictionary(Dictionary::MlabSource.from_env)
-  end
-
-  desc "Import the dictionary from the mLab API (MLAB_API_URL, and MLAB_API_TOKEN or MLAB_API_USER/PASSWORD)"
-  task import_from_mlab_api: :national_only do
-    import_the_dictionary(Dictionary::MlabApiSource.from_env)
-  end
-
-  desc "Take the mLab catalogue into a file the seed can load (SOURCE=api|database, OUT=path)"
-  task snapshot: :environment do
-    source = case ENV.fetch("SOURCE", "api")
-    when "api" then Dictionary::MlabApiSource.from_env
-    when "database" then Dictionary::MlabSource.from_env
-    else abort "SOURCE is api or database."
-    end
-
-    puts "Reading from #{source.describe}"
-    path = Dictionary::SnapshotSource.write(source, ENV.fetch("OUT", Dictionary::SnapshotSource::DEFAULT_PATH))
-
-    puts "\nCatalogue: #{path} (#{ActiveSupport::NumberHelper.number_to_human_size(path.size)})"
-    Dictionary::SnapshotSource::ENTITIES.each do |entity|
-      puts format("  %-28s %6d", entity, source.public_send(entity).length)
-    end
-
-    print_warnings(source)
-  end
-
   desc "Load the catalogue shipped with the release onto a new national node and publish it (ACTOR=..., SKIP_BLOCKED=1)"
   task seed: :national_only do
     seed = Dictionary::Seed.new(
-      source: Dictionary::SnapshotSource.load(ENV.fetch("SNAPSHOT", Dictionary::SnapshotSource::DEFAULT_PATH)),
+      source: Dictionary::Catalogue.load(ENV.fetch("CATALOGUE", Dictionary::Catalogue::DEFAULT_PATH)),
       actor: ENV["ACTOR"].presence || Dictionary::Seed::ACTOR,
       skip_blocked: ENV["SKIP_BLOCKED"].present?
     )
@@ -64,7 +32,6 @@ namespace :dictionary do
                 seed.reasons_created, Dictionary::Seed::REJECTION_REASONS.length - seed.reasons_created)
 
     print_skipped(seed.importer)
-    print_warnings(seed.source)
 
     puts "\nPublished:"
     puts seed.promotion.summary
@@ -129,23 +96,7 @@ namespace :dictionary do
     end
   end
 
-  # Both imports run the same way; only where the rows are read from differs.
-  def import_the_dictionary(source)
-    puts "Reading from #{source.describe}"
-
-    importer = Dictionary::MlabImporter.new(source: source).call
-
-    puts "\nImported:"
-    puts importer.summary
-
-    print_skipped(importer)
-    print_warnings(source)
-
-    Rake::Task["dictionary:quality"].invoke
-  end
-
-  # Rows the importer would not take, named so the laboratory can go and fix
-  # them upstream.
+  # Rows the importer would not take, named so the catalogue can be corrected.
   def print_skipped(importer)
     return if importer.skipped.empty?
 
@@ -153,15 +104,5 @@ namespace :dictionary do
     importer.skipped.each do |skip|
       puts format("  %-16s id=%-8s %s", skip[:entity_type], skip[:external_code], skip[:reason])
     end
-  end
-
-  # What the source could not read. The API has gaps the database does not, and
-  # they belong in front of whoever is promoting these entries.
-  def print_warnings(source)
-    warnings = source.try(:warnings).to_a
-    return if warnings.empty?
-
-    puts "\nAvisos da fonte:"
-    warnings.each { |warning| puts "  #{warning}" }
   end
 end

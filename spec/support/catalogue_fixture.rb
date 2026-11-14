@@ -1,19 +1,16 @@
 # frozen_string_literal: true
 
-# Stands in for Dictionary::MlabSource so the importer can be tested, and later
-# steps can be given a realistic dictionary, without a live mLab database.
-#
-# A snapshot is already a file answering the source methods, so this is one of
-# those with the means to bend the data — dropping a row, changing a field,
-# swapping a whole link table — the way a spec needs to watch the importer
-# react.
-class MlabFixtureSource < Dictionary::SnapshotSource
-  DEFAULT_PATH = "spec/fixtures/mlab_sample.json"
+# A small catalogue for the importer and everything downstream of it, with the
+# means to bend the data — dropping a row, changing a field, swapping a whole
+# link table — the way a spec needs to watch the importer react to a newer
+# catalogue.
+class CatalogueFixture < Dictionary::Catalogue
+  DEFAULT_PATH = "spec/fixtures/catalogue_sample.json"
 
   def describe = "fixture"
 
-  # Drop rows so a spec can watch the importer retire what has gone away
-  # upstream.
+  # Drop rows so a spec can watch the importer retire what a newer catalogue
+  # no longer carries.
   def without(entity, id)
     self.class.new(@data.merge(entity => rows_of(entity).reject { |row| row[:id] == id }))
   end

@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe Dictionary::MlabImporter do
-  let(:source) { MlabFixtureSource.load }
+RSpec.describe Dictionary::CatalogueImporter do
+  let(:source) { CatalogueFixture.load }
 
   def import(from = source)
     described_class.new(source: from).call
@@ -28,13 +28,13 @@ RSpec.describe Dictionary::MlabImporter do
       expect(Dictionary.changes_since(0)).to be_empty
     end
 
-    it "allocates our own national codes rather than carrying mLab ids" do
+    it "allocates national codes rather than carrying the catalogue's keys" do
       import
 
       expect(TestType.find_by(name: "Hemograma completo").national_code).to match(/\AMOZ-TT-\d{4}\z/)
     end
 
-    it "keeps the mLab id as an external mapping" do
+    it "keeps the catalogue key as an external mapping" do
       import
 
       test_type = TestType.find_by(name: "Hemograma completo")
@@ -64,7 +64,7 @@ RSpec.describe Dictionary::MlabImporter do
   describe "translation" do
     before { import }
 
-    it "maps mLab's indicator types to value types" do
+    it "carries the value type of each indicator" do
       expect(Indicator.find_by(name: "Hemoglobina", value_type: "Numeric")).to be_present
       expect(Indicator.find_by(name: "Cultura").value_type).to eq("Free Text")
     end
@@ -79,6 +79,11 @@ RSpec.describe Dictionary::MlabImporter do
 
       expect(test_type.target_tat).to eq("4 horas")
       expect(test_type.department.name).to eq("Bioquímica")
+    end
+
+    it "carries the LOINC code the catalogue gives an entry" do
+      expect(Indicator.find_by(name: "Hemoglobina", value_type: "Numeric").loinc_code).to eq("718-7")
+      expect(Indicator.find_by(name: "Cultura").loinc_code).to be_nil
     end
 
     it "keeps the section code as the ministry code" do
@@ -140,10 +145,10 @@ RSpec.describe Dictionary::MlabImporter do
     end
   end
 
-  describe "when the source has changed" do
+  describe "when a newer catalogue is loaded" do
     before { import }
 
-    it "updates an entry that was renamed upstream" do
+    it "updates an entry the catalogue renamed" do
       import(source.change(:test_types, 1, name: "Hemograma"))
 
       expect(TestType.find_by(name: "Hemograma")).to be_present
@@ -159,7 +164,7 @@ RSpec.describe Dictionary::MlabImporter do
       expect(TestType.find_by(name: "Hemograma").revision).to be > cursor
     end
 
-    it "removes a link that has gone away upstream" do
+    it "removes a link the catalogue dropped" do
       import(source.replace(:test_type_indicator_links, [ { test_type_id: 1, indicator_id: 1 } ]))
 
       expect(TestType.find_by(name: "Hemograma completo").indicators.map(&:name)).to eq([ "Hemoglobina" ])
@@ -177,7 +182,7 @@ RSpec.describe Dictionary::MlabImporter do
 
     # It cannot simply be deleted: a local node may already hold it, and only a
     # retirement travels down the delta.
-    it "retires an entry that has disappeared upstream" do
+    it "retires an entry the catalogue no longer carries" do
       result = import(source.without(:test_types, 2))
 
       entry = TestType.find_by(name: "Urina II")
