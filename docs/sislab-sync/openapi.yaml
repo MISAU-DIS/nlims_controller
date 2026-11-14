@@ -86,7 +86,7 @@ info:
     técnica em `message`.
   contact:
     name: MISAU — Direcção de Informação para a Saúde
-    url: https://github.com/MISAU-DIS/nlims_controller
+    url: https://github.com/MISAU-DIS/sislab_sync
   license:
     name: MIT
 

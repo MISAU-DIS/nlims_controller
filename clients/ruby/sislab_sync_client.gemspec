@@ -13,11 +13,11 @@ Gem::Specification.new do |spec|
     SISLAB Sync node: three profiles over one envelope, with cursor feeds,
     idempotent writes and one exception per refusal the node can give.
   TEXT
-  spec.homepage = "https://github.com/MISAU-DIS/nlims_controller"
+  spec.homepage = "https://github.com/MISAU-DIS/sislab_sync"
   spec.license = "MIT"
 
   spec.metadata = {
-    "source_code_uri" => "https://github.com/MISAU-DIS/nlims_controller/tree/main/clients/ruby",
+    "source_code_uri" => "https://github.com/MISAU-DIS/sislab_sync/tree/main/clients/ruby",
     "rubygems_mfa_required" => "true"
   }
 
