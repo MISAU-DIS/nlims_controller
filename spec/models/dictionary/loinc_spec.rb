@@ -8,7 +8,7 @@ RSpec.describe Dictionary::Loinc do
     # doubling the other set of digits — every one of these fails, which is the
     # whole reason they are here by name.
     it "aceita códigos LOINC verdadeiros" do
-      %w[718-7 2160-0 4544-3 2345-7 6690-2 30341-2 14682-9].each do |code|
+      %w[718-7 2160-0 4544-3 2345-7 6690-2 30341-2 14682-9 115742-9].each do |code|
         expect(described_class.check_digit_valid?(code)).to be(true), "esperava que #{code} passasse"
       end
     end
@@ -35,6 +35,11 @@ RSpec.describe Dictionary::Loinc do
       expect(described_class).not_to be_curated("departments")
       expect(described_class).not_to be_curated("rejection_reasons")
       expect(described_class).not_to be_curated("test_panels")
+    end
+
+    it "exclui organismos e espécimes, que o LOINC não codifica" do
+      expect(described_class).not_to be_curated("organisms")
+      expect(described_class).not_to be_curated("specimen_types")
     end
   end
 end
